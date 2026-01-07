@@ -1,0 +1,49 @@
+<!-- webflow-embed.html
+  Paste this into an "Embed" element in Webflow (or into your site <head>/<body>).
+  Replace the placeholders SUPABASE_URL and SUPABASE_ANON_KEY with your project's values.
+  Then either upload wall.js, chat.js, utils.js to your Webflow site and reference their URLs here,
+  or paste their contents inline below (recommended to upload them as separate assets).
+
+  IMPORTANT:
+  - SUPABASE_URL: found in Supabase project settings (API -> URL)
+  - SUPABASE_ANON_KEY: the public anon key (API -> anon key). Never embed your service_role key here.
+
+  Required HTML elements on the page (make sure these exist in your Webflow page):
+  - <form id="wallForm"><input id="wallInput" ...></form>
+  - <div id="wallList"></div>
+  - <form id="chatForm"><input id="chatInput" ...></form>
+  - <div id="chatList"></div>
+-->
+
+<!-- Supabase JS (v2 UMD) -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+
+<!-- Replace these placeholders before publishing -->
+<script>
+  // TODO: Replace these with your project's values
+  window.SUPABASE_URL = "https://YOUR-PROJECT.supabase.co";
+  window.SUPABASE_ANON_KEY = "YOUR_ANON_KEY";
+
+  // Initialize a globally-available client
+  // The UMD build exposes a global named `supabase` with createClient
+  window.supabaseClient = supabase.createClient(window.SUPABASE_URL, window.SUPABASE_ANON_KEY, {
+    // Optional: adjust realtime settings if needed
+    // realtime: { params: { eventsPerSecond: 10 } }
+  });
+</script>
+
+<!-- Include the helper scripts. Either upload these files to your Webflow assets and reference their paths,
+     or paste their contents inline. Example if uploaded to /assets/:
+     <script src="/assets/utils.js"></script>
+     <script src="/assets/wall.js"></script>
+     <script src="/assets/chat.js"></script>
+-->
+
+<!-- If you uploaded them, uncomment the lines below and set correct URLs -->
+<!--
+<script src="/assets/utils.js"></script>
+<script src="/assets/wall.js"></script>
+<script src="/assets/chat.js"></script>
+-->
+
+<!-- Or paste the contents of utils.js, wall.js, chat.js directly into separate <script> blocks here. -->
