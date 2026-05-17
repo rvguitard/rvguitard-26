@@ -2,48 +2,56 @@ import Image from "next/image";
 
 import { EmojiFloat } from "@/components/emoji-float";
 import { LedClock } from "@/components/led-clock";
+import { MessageBoard } from "@/components/message-board";
+import { MusicPlayer } from "@/components/music-player";
+import { ReactionStrip } from "@/components/reaction-strip";
+import { TestimonialGrid } from "@/components/testimonial-grid";
+import { VisualTile } from "@/components/visual-tile";
 
 const visualTiles = [
   {
     label: "/home",
     className: "tile-home",
+    videoSrc: "/videos/qualified-hp-1778982945862.mp4",
   },
   {
     label: "/2025-year-in-review",
     className: "tile-review",
+    videoSrc: "/videos/qualified-hp-1778982945862.mp4",
   },
   {
     label: "/customers",
     className: "tile-customers",
+    videoSrc: "/videos/qualified-hp-1778982945862.mp4",
   },
   {
     label: "/university",
     className: "tile-university",
+    videoSrc: "/videos/qualified-hp-1778982945862.mp4",
   },
   {
     label: "/plus",
     className: "tile-plus",
+    videoSrc: "/videos/qualified-hp-1778982945862.mp4",
   },
   {
     label: "/resources/roi-calculator",
     className: "tile-calculator",
+    videoSrc: "/videos/qualified-hp-1778982945862.mp4",
   },
 ];
 
-const freelanceProjects = ["muuvment.com", "cawu.ca", "gale.agency"];
-
-const people = [
-  "Danny Pellissier, Video/Design",
-  "Ran Jing, Web",
-  "Brad Cunningham, Motion",
-  "KG, Design",
+const freelanceProjects = [
+  { label: "muuvment.com", href: "https://muuvment.com" },
+  { label: "cawu.ca", href: "https://cawu.ca" },
+  { label: "gale.agency", href: "https://gale.agency" },
 ];
 
-const testimonials = [
-  ["“It was an absolute pleasure to work with Rock”", "Olivia Terceros, Founder", "LATAM Professionals"],
-  ["“It was an absolute pleasure to work with Rock”", "Ohad Tzur, Founder", "Kahoona"],
-  ["“It was an absolute pleasure to work with Rock”", "Jimmy Cabral, Creative Director", "Qualified"],
-  ["“It was an absolute pleasure to work with Rock”", "Yonnas Masfariam, Program Manager", "Webflow"],
+const people = [
+  { label: "Danny Pellissier, Video/Design", href: "#" },
+  { label: "Ran Jing, Web", href: "#" },
+  { label: "Brad Cunningham, Motion", href: "#" },
+  { label: "KG, Design", href: "#" },
 ];
 
 export default function Home() {
@@ -54,6 +62,7 @@ export default function Home() {
         <a href="#work">⌘</a>
         <a href="#bottom">↓</a>
       </aside>
+      <MusicPlayer />
 
       <article id="top" className="portfolio-page">
         <section className="clock-panel" aria-label="Current focus">
@@ -68,8 +77,15 @@ export default function Home() {
           <span className="title-sub">🇨🇦 Gatineau, QC</span>
         </header>
 
-        <div className="marquee" aria-hidden="true">
-          <span>SHOW ME WORK SHOW ME WORK SHOW ME WORK SHOW ME WORK</span>
+        <div className="section-marquee work-marquee" aria-hidden="true">
+          <div className="marquee-track marquee-left">
+            <span>SHOW ME WORK SHOW ME WORK SHOW ME WORK</span>
+            <span>SHOW ME WORK SHOW ME WORK SHOW ME WORK</span>
+          </div>
+          <div className="marquee-track marquee-right">
+            <span>SHOW ME WORK SHOW ME WORK SHOW ME WORK</span>
+            <span>SHOW ME WORK SHOW ME WORK SHOW ME WORK</span>
+          </div>
         </div>
 
         <section id="work" className="project-card">
@@ -86,10 +102,12 @@ export default function Home() {
 
           <div className="visual-grid">
             {visualTiles.map((tile) => (
-              <figure key={tile.label} className={`visual-tile ${tile.className}`}>
-                <div className="tile-art" />
-                <figcaption>{tile.label}</figcaption>
-              </figure>
+              <VisualTile
+                className={tile.className}
+                key={tile.label}
+                label={tile.label}
+                videoSrc={tile.videoSrc}
+              />
             ))}
           </div>
         </section>
@@ -97,78 +115,56 @@ export default function Home() {
         <section className="notes" id="bottom">
           <div className="freelance-list">
             {freelanceProjects.map((project) => (
-              <div key={project} className="freelance-row">
-                <span>{project}</span>
+              <a key={project.label} className="freelance-row" href={project.href}>
+                <span className="freelance-url">{project.label}</span>
                 <span className="title-sub">Freelance</span>
-              </div>
+              </a>
             ))}
           </div>
 
-          <div className="message-marquee" aria-hidden="true">
-            <span>leave a message leave a message leave a message</span>
+          <div className="section-marquee message-marquee" aria-hidden="true">
+            <div className="marquee-track marquee-left">
+              <span>LEAVE A MESSAGE LEAVE A MESSAGE LEAVE A MESSAGE</span>
+              <span>LEAVE A MESSAGE LEAVE A MESSAGE LEAVE A MESSAGE</span>
+            </div>
+            <div className="marquee-track marquee-right">
+              <span>LEAVE A MESSAGE LEAVE A MESSAGE LEAVE A MESSAGE</span>
+              <span>LEAVE A MESSAGE LEAVE A MESSAGE LEAVE A MESSAGE</span>
+            </div>
           </div>
 
-          <div className="reaction-strip" aria-label="Reactions">
-            <span>😁</span>
-            <span>💩</span>
-            <span>😮</span>
-            <span>💀</span>
-            <span>😊</span>
-            <span>😖</span>
-            <span>😅</span>
-            <span>😁</span>
-            <span>👍</span>
-            <span>🤑</span>
-            <span>👀</span>
-            <span className="reaction-count">10</span>
-            <span>😄</span>
-            <span>👏</span>
-            <span>😠</span>
-            <span>🤣</span>
-            <span>🙏</span>
-            <span>🥹</span>
-            <span>😘</span>
-            <span>🤯</span>
-            <span>✌️</span>
-            <span>😍</span>
-            <span>☝️</span>
-            <span className="reaction-count">1</span>
-            <span>😡</span>
-          </div>
+          <ReactionStrip />
 
           <div className="message-grid">
             <section className="people-card">
               <h2>Some awesome people you should stalk</h2>
               <ul>
                 {people.map((person) => (
-                  <li key={person}>{person}</li>
+                  <li key={person.label}>
+                    <a href={person.href} className="people-link">
+                      {person.label}
+                    </a>
+                  </li>
                 ))}
               </ul>
             </section>
 
-            <section className="chat-card" aria-label="Message preview">
-              <div className="bubble incoming">Yo, love you.</div>
-              <div className="bubble outgoing">Whatcha been watching lately?</div>
-              <div className="message-input">Share a message...</div>
-            </section>
+            <MessageBoard />
           </div>
                 
-          <div className="testimonial-grid">
-            {testimonials.map(([quote, name, company]) => (
-              <blockquote key={`${name}-${company}`} className="testimonial">
-                <p>{quote}</p>
-                <footer>
-                  <span>{name}</span>
-                  <span>{company}</span>
-                </footer>
-              </blockquote>
-            ))}
-          </div>
+          <TestimonialGrid />
         </section>
 
         <section className="life-section">
-          <div className="about-marquee" aria-hidden="true">
-            <span>NOW MORE ABOUT ME? HERE? SATISFIED? NOW MORE ABOUT ME?</span>
+          <div className="section-marquee about-marquee" aria-hidden="true">
+            <div className="marquee-track marquee-right">
+              <span>NOW MORE ABOUT ME? HERE? SATISFIED?</span>
+              <span>NOW MORE ABOUT ME? HERE? SATISFIED?</span>
+            </div>
+            <div className="marquee-track marquee-left">
+              <span>NOW MORE ABOUT ME? HERE? SATISFIED?</span>
+              <span>NOW MORE ABOUT ME? HERE? SATISFIED?</span>
+            </div>
           </div>
 
           <EmojiFloat initialCount={0} />
