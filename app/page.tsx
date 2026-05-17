@@ -8,36 +8,40 @@ import { ReactionStrip } from "@/components/reaction-strip";
 import { TestimonialGrid } from "@/components/testimonial-grid";
 import { VisualTile } from "@/components/visual-tile";
 
+const basePath = process.env.NEXT_PUBLIC_BASE_PATH || "";
+const withBasePath = (path: string) => `${basePath}${path}`;
+const previewVideoSrc = withBasePath("/videos/qualified-hp-1778982945862.mp4");
+
 const visualTiles = [
   {
     label: "/home",
     className: "tile-home",
-    videoSrc: "/videos/qualified-hp-1778982945862.mp4",
+    videoSrc: previewVideoSrc,
   },
   {
     label: "/2025-year-in-review",
     className: "tile-review",
-    videoSrc: "/videos/qualified-hp-1778982945862.mp4",
+    videoSrc: previewVideoSrc,
   },
   {
     label: "/customers",
     className: "tile-customers",
-    videoSrc: "/videos/qualified-hp-1778982945862.mp4",
+    videoSrc: previewVideoSrc,
   },
   {
     label: "/university",
     className: "tile-university",
-    videoSrc: "/videos/qualified-hp-1778982945862.mp4",
+    videoSrc: previewVideoSrc,
   },
   {
     label: "/plus",
     className: "tile-plus",
-    videoSrc: "/videos/qualified-hp-1778982945862.mp4",
+    videoSrc: previewVideoSrc,
   },
   {
     label: "/resources/roi-calculator",
     className: "tile-calculator",
-    videoSrc: "/videos/qualified-hp-1778982945862.mp4",
+    videoSrc: previewVideoSrc,
   },
 ];
 
@@ -172,7 +176,7 @@ export default function Home() {
           <div className="photo-strip" aria-label="Personal photos">
             <figure className="photo-card photo-japan">
               <Image
-                src="/photos/japan.webp"
+                src={withBasePath("/photos/japan.webp")}
                 alt="Rock smiling by Mount Fuji in Japan"
                 width={233}
                 height={146}
@@ -181,7 +185,7 @@ export default function Home() {
             </figure>
             <figure className="photo-card photo-lighthouse">
               <Image
-                src="/photos/vancouver.webp"
+                src={withBasePath("/photos/vancouver.webp")}
                 alt="A misty lighthouse view in Vancouver"
                 width={233}
                 height={146}
@@ -190,7 +194,7 @@ export default function Home() {
             </figure>
             <figure className="photo-card photo-dog">
               <Image
-                src="/photos/tuna.webp"
+                src={withBasePath("/photos/tuna.webp")}
                 alt="Tuna the dog sitting in a laundry basket"
                 width={233}
                 height={146}
@@ -203,7 +207,7 @@ export default function Home() {
             <p>More coming soon...</p>
             <Image
               className="footer-mark"
-              src="/assets/R.svg"
+              src={withBasePath("/assets/R.svg")}
               alt="Rock Vincent Guitard mark"
               width={31}
               height={34}
