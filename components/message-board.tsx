@@ -143,14 +143,14 @@ export function MessageBoard() {
       const { data, error } = await client
         .from("messages")
         .select("id,body,created_at")
-        .order("created_at", { ascending: true })
+        .order("created_at", { ascending: false })
         .limit(40);
 
       if (!isMounted || error || !data) {
         return;
       }
 
-      const remoteMessages = (data as MessageRow[]).map(mapMessageRow);
+      const remoteMessages = sortMessages((data as MessageRow[]).map(mapMessageRow));
       const nextMessages = remoteMessages.length > 0 ? remoteMessages : starterMessages;
 
       saveCachedMessages(nextMessages);
