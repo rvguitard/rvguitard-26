@@ -1,11 +1,17 @@
 "use client";
 
-import { useSyncExternalStore, type CSSProperties } from "react";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { type CSSProperties, useEffect, useMemo, useRef, useState } from "react";
+import { supabase } from "@/lib/supabase";
+import { getVisitorId } from "@/lib/visitor-id";
 
 type Reaction = {
   id: string;
   emoji: string;
+};
+
+type ReactionCountRow = {
+  reaction_id: string;
+  count: number;
 };
 
 const reactions: Reaction[] = [
@@ -34,9 +40,7 @@ const reactions: Reaction[] = [
   { id: "rage", emoji: "😡" },
 ];
 
-const countsKey = "rvg-reaction-counts";
 const selectedKey = "rvg-reaction-selected-visit";
-const reactionStoreEvent = "rvg-reaction-store-change";
 const showReactionReset = process.env.NODE_ENV !== "production";
 const reactionBaseSlot = 24;
 const reactionGap = 2;
@@ -44,35 +48,11 @@ const reactionGap = 2;
 function getInitialCounts() {
   return Object.fromEntries(
     reactions.map((reaction) => [reaction.id, 0]),
-  );
+  ) as Record<string, number>;
 }
 
 function getReactionScale(count: number) {
   return Math.min(1 + count * 0.045, 1.7);
-}
-
-function parseCounts(savedCounts: string | null) {
-  if (!savedCounts) {
-    return getInitialCounts();
-  }
-
-  try {
-    return { ...getInitialCounts(), ...JSON.parse(savedCounts) };
-  } catch {
-    return getInitialCounts();
-  }
-}
-
-function getStoredCounts() {
-  if (typeof window === "undefined") {
-    return null;
-  }
-
-  try {
-    return window.localStorage?.getItem(countsKey) ?? null;
-  } catch {
-    return null;
-  }
 }
 
 function getStoredSelectedReaction() {
@@ -81,17 +61,15 @@ function getStoredSelectedReaction() {
   }
 
   try {
-    return window.sessionStorage?.getItem(selectedKey) ?? null;
+    return window.localStorage?.getItem(selectedKey) ?? null;
   } catch {
     return null;
   }
 }
 
-function saveReactionState(reactionId: string, counts: Record<string, number>) {
+function saveSelectedReaction(reactionId: string) {
   try {
-    window.localStorage?.setItem(countsKey, JSON.stringify(counts));
-    window.sessionStorage?.setItem(selectedKey, reactionId);
-    window.dispatchEvent(new Event(reactionStoreEvent));
+    window.localStorage?.setItem(selectedKey, reactionId);
   } catch {
     return;
   }
@@ -99,50 +77,28 @@ function saveReactionState(reactionId: string, counts: Record<string, number>) {
 
 function resetReactionState() {
   try {
-    window.localStorage?.removeItem(countsKey);
-    window.sessionStorage?.removeItem(selectedKey);
-    window.dispatchEvent(new Event(reactionStoreEvent));
+    window.localStorage?.removeItem(selectedKey);
   } catch {
     return;
   }
 }
 
-function getReactionSnapshot() {
-  return JSON.stringify({
-    counts: parseCounts(getStoredCounts()),
-    selectedReaction: getStoredSelectedReaction(),
-  });
-}
-
-function getServerReactionSnapshot() {
-  return JSON.stringify({
-    counts: getInitialCounts(),
-    selectedReaction: null,
-  });
-}
-
-function subscribeToReactionStore(callback: () => void) {
-  window.addEventListener(reactionStoreEvent, callback);
-  window.addEventListener("storage", callback);
-
-  return () => {
-    window.removeEventListener(reactionStoreEvent, callback);
-    window.removeEventListener("storage", callback);
-  };
+function rowsToCounts(rows: ReactionCountRow[]) {
+  return rows.reduce(
+    (nextCounts, row) => ({
+      ...nextCounts,
+      [row.reaction_id]: row.count,
+    }),
+    getInitialCounts(),
+  );
 }
 
 export function ReactionStrip() {
   const reactionListRef = useRef<HTMLDivElement>(null);
+  const [counts, setCounts] = useState<Record<string, number>>(getInitialCounts);
+  const [selectedReaction, setSelectedReaction] = useState<string | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [reactionListWidth, setReactionListWidth] = useState(0);
-  const snapshot = useSyncExternalStore(
-    subscribeToReactionStore,
-    getReactionSnapshot,
-    getServerReactionSnapshot,
-  );
-  const { counts, selectedReaction } = JSON.parse(snapshot) as {
-    counts: Record<string, number>;
-    selectedReaction: string | null;
-  };
   const rawScales = useMemo(
     () => reactions.map((reaction) => getReactionScale(counts[reaction.id] ?? 0)),
     [counts],
@@ -154,6 +110,61 @@ export function ReactionStrip() {
   const fitRatio = reactionListWidth > 0
     ? Math.min(1, reactionListWidth / totalDesiredWidth)
     : 1;
+
+  useEffect(() => {
+    setSelectedReaction(getStoredSelectedReaction());
+
+    if (!supabase) {
+      return;
+    }
+
+    const client = supabase;
+    let isMounted = true;
+
+    async function loadReactionCounts() {
+      const { data, error } = await client
+        .from("reaction_counts")
+        .select("reaction_id,count");
+
+      if (!isMounted || error || !data) {
+        return;
+      }
+
+      setCounts(rowsToCounts(data as ReactionCountRow[]));
+    }
+
+    loadReactionCounts();
+
+    const channel = client
+      .channel("reaction-counts")
+      .on(
+        "postgres_changes",
+        {
+          event: "*",
+          schema: "public",
+          table: "reaction_counts",
+        },
+        (payload) => {
+          const row = payload.new as ReactionCountRow | null;
+
+          if (!row?.reaction_id) {
+            loadReactionCounts();
+            return;
+          }
+
+          setCounts((currentCounts) => ({
+            ...currentCounts,
+            [row.reaction_id]: row.count,
+          }));
+        },
+      )
+      .subscribe();
+
+    return () => {
+      isMounted = false;
+      client.removeChannel(channel);
+    };
+  }, []);
 
   useEffect(() => {
     const reactionList = reactionListRef.current;
@@ -171,17 +182,59 @@ export function ReactionStrip() {
     return () => observer.disconnect();
   }, []);
 
-  function handleReactionClick(reactionId: string) {
-    if (selectedReaction) {
+  async function handleReactionClick(reactionId: string) {
+    if (selectedReaction || isSubmitting) {
       return;
     }
 
-    const nextCounts = {
-      ...counts,
-      [reactionId]: (counts[reactionId] ?? 0) + 1,
-    };
+    const visitorId = getVisitorId();
 
-    saveReactionState(reactionId, nextCounts);
+    if (!supabase || !visitorId) {
+      setSelectedReaction(reactionId);
+      saveSelectedReaction(reactionId);
+      setCounts((currentCounts) => ({
+        ...currentCounts,
+        [reactionId]: (currentCounts[reactionId] ?? 0) + 1,
+      }));
+      return;
+    }
+
+    const client = supabase;
+
+    setIsSubmitting(true);
+    setSelectedReaction(reactionId);
+    saveSelectedReaction(reactionId);
+    setCounts((currentCounts) => ({
+      ...currentCounts,
+      [reactionId]: (currentCounts[reactionId] ?? 0) + 1,
+    }));
+
+    const { data, error } = await client.rpc("submit_reaction", {
+      p_reaction_id: reactionId,
+      p_visitor_id: visitorId,
+    });
+
+    setIsSubmitting(false);
+
+    if (error || !data) {
+      resetReactionState();
+      setSelectedReaction(null);
+      setCounts((currentCounts) => ({
+        ...currentCounts,
+        [reactionId]: Math.max((currentCounts[reactionId] ?? 1) - 1, 0),
+      }));
+      if (process.env.NODE_ENV !== "production") {
+        console.error("Reaction submit failed", error);
+      }
+      return;
+    }
+
+    setCounts(rowsToCounts(data as ReactionCountRow[]));
+  }
+
+  function handleResetReaction() {
+    resetReactionState();
+    setSelectedReaction(null);
   }
 
   return (
@@ -190,41 +243,45 @@ export function ReactionStrip() {
         <button
           aria-label="Reset reactions for testing"
           className="reaction-reset"
-          onClick={resetReactionState}
+          onClick={handleResetReaction}
           type="button"
         >
           ↺
         </button>
       )}
       <div className="reaction-list" ref={reactionListRef}>
-      {reactions.map((reaction, index) => {
-        const count = counts[reaction.id] ?? 0;
-        const isSelected = selectedReaction === reaction.id;
-        const reactionScale = rawScales[index] * fitRatio;
-        const reactionSlotSize = reactionBaseSlot * reactionScale;
-        const buttonStyle = {
-          "--reaction-scale": reactionScale,
-          "--reaction-slot-size": `${reactionSlotSize}px`,
-        } as CSSProperties;
+        {reactions.map((reaction, index) => {
+          const count = counts[reaction.id] ?? 0;
+          const isSelected = selectedReaction === reaction.id;
+          const reactionScale = rawScales[index] * fitRatio;
+          const reactionSlotSize = reactionBaseSlot * reactionScale;
+          const buttonStyle = {
+            "--reaction-scale": reactionScale,
+            "--reaction-slot-size": `${reactionSlotSize}px`,
+          } as CSSProperties;
 
-        return (
-          <button
-            key={reaction.id}
-            aria-label={`${reaction.emoji} reaction${count > 0 ? `, ${count}` : ""}`}
-            aria-pressed={isSelected}
-            className="reaction-button"
-            disabled={Boolean(selectedReaction)}
-            onClick={() => handleReactionClick(reaction.id)}
-            style={buttonStyle}
-            type="button"
-          >
-            {count > 0 && <span className="reaction-count">{count}</span>}
-            <span className="reaction-emoji" aria-hidden="true">
-              {reaction.emoji}
-            </span>
-          </button>
-        );
-      })}
+          return (
+            <button
+              key={reaction.id}
+              aria-label={`${reaction.emoji} reaction${count > 0 ? `, ${count}` : ""}`}
+              aria-pressed={isSelected}
+              className="reaction-button"
+              disabled={Boolean(selectedReaction) || isSubmitting}
+              onClick={() => handleReactionClick(reaction.id)}
+              style={buttonStyle}
+              type="button"
+            >
+              {count > 0 && (
+                <span className="reaction-count" key={`${reaction.id}-${count}`}>
+                  {count}
+                </span>
+              )}
+              <span className="reaction-emoji" aria-hidden="true">
+                {reaction.emoji}
+              </span>
+            </button>
+          );
+        })}
       </div>
     </div>
   );

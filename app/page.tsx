@@ -1,9 +1,11 @@
 import Image from "next/image";
 
 import { EmojiFloat } from "@/components/emoji-float";
+import { FooterLogo } from "@/components/footer-logo";
 import { LedClock } from "@/components/led-clock";
 import { MessageBoard } from "@/components/message-board";
 import { MusicPlayer } from "@/components/music-player";
+import { PhotoCarousel } from "@/components/photo-carousel";
 import { ReactionStrip } from "@/components/reaction-strip";
 import { TestimonialGrid } from "@/components/testimonial-grid";
 import { VisualTile } from "@/components/visual-tile";
@@ -173,45 +175,11 @@ export default function Home() {
 
           <EmojiFloat initialCount={0} />
 
-          <div className="photo-strip" aria-label="Personal photos">
-            <figure className="photo-card photo-japan">
-              <Image
-                src={withBasePath("/photos/japan.webp")}
-                alt="Rock smiling by Mount Fuji in Japan"
-                width={233}
-                height={146}
-              />
-              <figcaption>Japan walks</figcaption>
-            </figure>
-            <figure className="photo-card photo-lighthouse">
-              <Image
-                src={withBasePath("/photos/vancouver.webp")}
-                alt="A misty lighthouse view in Vancouver"
-                width={233}
-                height={146}
-              />
-              <figcaption>Coastal weather</figcaption>
-            </figure>
-            <figure className="photo-card photo-dog">
-              <Image
-                src={withBasePath("/photos/tuna.webp")}
-                alt="Tuna the dog sitting in a laundry basket"
-                width={233}
-                height={146}
-              />
-              <figcaption>Small assistant</figcaption>
-            </figure>
-          </div>
+          <PhotoCarousel />
 
           <footer className="site-footer">
             <p>More coming soon...</p>
-            <Image
-              className="footer-mark"
-              src={withBasePath("/assets/R.svg")}
-              alt="Rock Vincent Guitard mark"
-              width={31}
-              height={34}
-            />
+            <FooterLogo />
             <nav aria-label="Social links">
               <a href="https://instagram.com">Instagram ↗</a>
               <a href="https://twitter.com">Twitter ↗</a>

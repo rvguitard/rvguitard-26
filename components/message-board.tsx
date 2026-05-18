@@ -1,7 +1,12 @@
 "use client";
 
-import { FormEvent, useSyncExternalStore } from "react";
-import { useMemo, useRef, useState } from "react";
+import { FormEvent, useEffect, useMemo, useRef, useState } from "react";
+import { supabase } from "@/lib/supabase";
+import { getVisitorId } from "@/lib/visitor-id";
+import {
+  MESSAGE_MAX_LENGTH,
+  validateMessage,
+} from "@/lib/message-rules";
 
 type BoardMessage = {
   id: string;
@@ -9,9 +14,14 @@ type BoardMessage = {
   createdAt: string;
 };
 
-const messagesKey = "rvg-message-board-messages";
+type MessageRow = {
+  id: string;
+  body: string;
+  created_at: string;
+};
+
 const submittedDayKey = "rvg-message-board-submitted-day";
-const messageStoreEvent = "rvg-message-board-store-change";
+const messagesCacheKey = "rvg-message-board-cache";
 const showMessageReset = process.env.NODE_ENV !== "production";
 const starterMessages: BoardMessage[] = [
   {
@@ -30,22 +40,6 @@ function getTodayKey() {
   return new Date().toISOString().slice(0, 10);
 }
 
-function normalizeMessage(body: string) {
-  return body.trim().replace(/\s+/g, " ").slice(0, 180);
-}
-
-function getStoredMessages() {
-  if (typeof window === "undefined") {
-    return null;
-  }
-
-  try {
-    return window.localStorage?.getItem(messagesKey) ?? null;
-  } catch {
-    return null;
-  }
-}
-
 function getSubmittedDay() {
   if (typeof window === "undefined") {
     return null;
@@ -58,48 +52,9 @@ function getSubmittedDay() {
   }
 }
 
-function parseMessages(savedMessages: string | null) {
-  if (!savedMessages) {
-    return starterMessages;
-  }
-
+function saveSubmittedDay(submittedDay: string) {
   try {
-    const messages = JSON.parse(savedMessages) as BoardMessage[];
-    return messages.length > 0 ? messages : starterMessages;
-  } catch {
-    return starterMessages;
-  }
-}
-
-function getMessageSnapshot() {
-  return JSON.stringify({
-    messages: parseMessages(getStoredMessages()),
-    submittedDay: getSubmittedDay(),
-  });
-}
-
-function getServerMessageSnapshot() {
-  return JSON.stringify({
-    messages: starterMessages,
-    submittedDay: null,
-  });
-}
-
-function subscribeToMessageStore(callback: () => void) {
-  window.addEventListener(messageStoreEvent, callback);
-  window.addEventListener("storage", callback);
-
-  return () => {
-    window.removeEventListener(messageStoreEvent, callback);
-    window.removeEventListener("storage", callback);
-  };
-}
-
-function saveMessageState(messages: BoardMessage[], submittedDay: string) {
-  try {
-    window.localStorage?.setItem(messagesKey, JSON.stringify(messages));
     window.localStorage?.setItem(submittedDayKey, submittedDay);
-    window.dispatchEvent(new Event(messageStoreEvent));
   } catch {
     return;
   }
@@ -107,61 +62,227 @@ function saveMessageState(messages: BoardMessage[], submittedDay: string) {
 
 function resetMessageState() {
   try {
-    window.localStorage?.removeItem(messagesKey);
     window.localStorage?.removeItem(submittedDayKey);
-    window.dispatchEvent(new Event(messageStoreEvent));
   } catch {
     return;
   }
 }
 
+function getCachedMessages() {
+  if (typeof window === "undefined") {
+    return starterMessages;
+  }
+
+  try {
+    const savedMessages = window.localStorage?.getItem(messagesCacheKey);
+
+    if (!savedMessages) {
+      return starterMessages;
+    }
+
+    const messages = JSON.parse(savedMessages) as BoardMessage[];
+    return messages.length > 0 ? messages : starterMessages;
+  } catch {
+    return starterMessages;
+  }
+}
+
+function saveCachedMessages(messages: BoardMessage[]) {
+  try {
+    window.localStorage?.setItem(messagesCacheKey, JSON.stringify(messages));
+  } catch {
+    return;
+  }
+}
+
+function mapMessageRow(row: MessageRow): BoardMessage {
+  return {
+    id: row.id,
+    body: row.body,
+    createdAt: row.created_at,
+  };
+}
+
+function sortMessages(messages: BoardMessage[]) {
+  return [...messages].sort(
+    (firstMessage, secondMessage) =>
+      new Date(firstMessage.createdAt).getTime() -
+      new Date(secondMessage.createdAt).getTime(),
+  );
+}
+
+function dedupeMessages(messages: BoardMessage[]) {
+  return Array.from(
+    new Map(messages.map((message) => [message.id, message])).values(),
+  );
+}
+
 export function MessageBoard() {
   const [draft, setDraft] = useState("");
+  const [messages, setMessages] = useState<BoardMessage[]>(getCachedMessages);
+  const [submittedDay, setSubmittedDay] = useState<string | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [hasSyncedMessages, setHasSyncedMessages] = useState(false);
+  const [feedback, setFeedback] = useState<string | null>(null);
   const historyRef = useRef<HTMLDivElement>(null);
-  const snapshot = useSyncExternalStore(
-    subscribeToMessageStore,
-    getMessageSnapshot,
-    getServerMessageSnapshot,
-  );
-  const { messages, submittedDay } = JSON.parse(snapshot) as {
-    messages: BoardMessage[];
-    submittedDay: string | null;
-  };
   const todayKey = useMemo(() => getTodayKey(), []);
   const hasSubmittedToday = submittedDay === todayKey;
+  const remainingCharacters = MESSAGE_MAX_LENGTH - draft.length;
 
-  function handleSubmit(event: FormEvent<HTMLFormElement>) {
+  useEffect(() => {
+    setSubmittedDay(getSubmittedDay());
+
+    if (!supabase) {
+      return;
+    }
+
+    const client = supabase;
+    let isMounted = true;
+
+    async function loadMessages() {
+      const { data, error } = await client
+        .from("messages")
+        .select("id,body,created_at")
+        .order("created_at", { ascending: true })
+        .limit(40);
+
+      if (!isMounted || error || !data) {
+        return;
+      }
+
+      const remoteMessages = (data as MessageRow[]).map(mapMessageRow);
+      const nextMessages = remoteMessages.length > 0 ? remoteMessages : starterMessages;
+
+      saveCachedMessages(nextMessages);
+      setMessages(nextMessages);
+      setHasSyncedMessages(true);
+    }
+
+    loadMessages();
+
+    const channel = client
+      .channel("message-board")
+      .on(
+        "postgres_changes",
+        {
+          event: "INSERT",
+          schema: "public",
+          table: "messages",
+        },
+        (payload) => {
+          const row = payload.new as MessageRow | null;
+
+          if (!row?.id) {
+            loadMessages();
+            return;
+          }
+
+          setMessages((currentMessages) => {
+            const nextMessages = sortMessages(
+              dedupeMessages([...currentMessages, mapMessageRow(row)]),
+            );
+
+            saveCachedMessages(nextMessages);
+            return nextMessages;
+          });
+        },
+      )
+      .subscribe();
+
+    return () => {
+      isMounted = false;
+      client.removeChannel(channel);
+    };
+  }, []);
+
+  useEffect(() => {
+    historyRef.current?.scrollTo({
+      top: historyRef.current.scrollHeight,
+    });
+  }, [messages]);
+
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
-    if (hasSubmittedToday) {
+    if (hasSubmittedToday || isSubmitting) {
       return;
     }
 
+    const visitorId = getVisitorId();
     const form = event.currentTarget;
-    const body = normalizeMessage(String(new FormData(form).get("message") ?? ""));
+    const result = validateMessage(String(new FormData(form).get("message") ?? ""));
 
-    if (!body) {
+    if (!result.ok) {
+      setFeedback(result.message);
       return;
     }
 
-    const nextMessages = [
-      ...messages,
-      {
-        id: `local-${todayKey}-${messages.length}`,
-        body,
-        createdAt: todayKey,
-      },
-    ];
+    const body = result.body;
+    const optimisticMessage = {
+      id: `local-${todayKey}-${Date.now()}`,
+      body,
+      createdAt: new Date().toISOString(),
+    };
 
-    saveMessageState(nextMessages, todayKey);
+    setIsSubmitting(true);
+    setMessages((currentMessages) => {
+      const nextMessages = sortMessages(
+        dedupeMessages([...currentMessages, optimisticMessage]),
+      );
+
+      saveCachedMessages(nextMessages);
+      return nextMessages;
+    });
+    setSubmittedDay(todayKey);
+    saveSubmittedDay(todayKey);
+    setFeedback(null);
     setDraft("");
     form.reset();
-    requestAnimationFrame(() => {
-      historyRef.current?.scrollTo({
-        top: historyRef.current.scrollHeight,
-        behavior: "smooth",
-      });
+
+    if (!supabase || !visitorId) {
+      setIsSubmitting(false);
+      return;
+    }
+
+    const client = supabase;
+
+    const { data, error } = await client
+      .from("messages")
+      .insert({
+        visitor_id: visitorId,
+        body,
+      })
+      .select("id,body,created_at")
+      .single();
+
+    setIsSubmitting(false);
+
+    if (error || !data) {
+      setFeedback("That message did not go through.");
+      setSubmittedDay(null);
+      resetMessageState();
+      setMessages((currentMessages) =>
+        currentMessages.filter((message) => message.id !== optimisticMessage.id),
+      );
+      return;
+    }
+
+    setMessages((currentMessages) => {
+      const nextMessages = sortMessages(
+        dedupeMessages([
+          ...currentMessages.filter((message) => message.id !== optimisticMessage.id),
+          mapMessageRow(data as MessageRow),
+        ]),
+      );
+
+      saveCachedMessages(nextMessages);
+      return nextMessages;
     });
+  }
+
+  function handleResetMessages() {
+    resetMessageState();
+    setSubmittedDay(null);
   }
 
   return (
@@ -170,14 +291,17 @@ export function MessageBoard() {
         <button
           aria-label="Reset messages for testing"
           className="message-reset"
-          onClick={resetMessageState}
+          onClick={handleResetMessages}
           type="button"
         >
           ↺
         </button>
       )}
 
-      <div className="message-history" ref={historyRef}>
+      <div
+        className={`message-history ${hasSyncedMessages ? "is-synced" : "is-syncing"}`}
+        ref={historyRef}
+      >
         {messages.map((message, index) => (
           <div
             className={`bubble ${index % 2 === 0 ? "incoming" : "outgoing"}`}
@@ -195,16 +319,32 @@ export function MessageBoard() {
           <input
             aria-label="Share a message"
             className="message-input"
-            maxLength={180}
+            disabled={isSubmitting}
+            maxLength={MESSAGE_MAX_LENGTH}
             name="message"
-            onChange={(event) => setDraft(event.target.value)}
+            onChange={(event) => {
+              setDraft(event.target.value);
+              setFeedback(null);
+            }}
             placeholder="Share a message..."
             type="text"
             value={draft}
           />
-          <button className="message-submit" type="submit">
+          <button
+            className="message-submit"
+            disabled={isSubmitting || draft.trim().length === 0}
+            type="submit"
+          >
             Submit
           </button>
+          <span className="message-meter" aria-live="polite">
+            {remainingCharacters}
+          </span>
+          {feedback && (
+            <p className="message-feedback" role="status">
+              {feedback}
+            </p>
+          )}
         </form>
       )}
     </section>
