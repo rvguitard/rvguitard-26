@@ -54,10 +54,12 @@ const freelanceProjects = [
 ];
 
 const people = [
-  { label: "Danny Pellissier, Video/Design", href: "#" },
-  { label: "Ran Jing, Web", href: "#" },
-  { label: "Brad Cunningham, Motion", href: "#" },
-  { label: "KG, Design", href: "#" },
+  { label: "Danny Pellissier, Video/Design", href: "https://www.dannypellissier.com/" },
+  { label: "Ran Jing, Web", href: "https://www.ranjingdesign.com/" },
+  { label: "Brad Cannady, Motion", href: "https://bradcannady.com/work" },
+  { label: "KG, Design", href: "https://www.kogepi.com/" },
+  { label: "Tim Choy, Art Director", href: "#" },
+  { label: "Hilary Hedwig, Program Manager", href: "#" },
 ];
 
 export default function Home() {
@@ -75,13 +77,23 @@ export default function Home() {
           <LedClock />
         </section>
 
-        <header className="intro-panel">
-          <div>
-            <h1>Rock Vincent Guitard</h1>
-            <p>Figuring out AI and pushing things to the web.</p>
-          </div>
-          <span className="title-sub">🇨🇦 Gatineau, QC</span>
-        </header>
+        <div className="intro-reveal">
+          <Image
+            className="intro-profile"
+            src={withBasePath("/assets/profile.webp")}
+            alt="Rock Vincent Guitard"
+            width={96}
+            height={128}
+            priority
+          />
+          <header className="intro-panel">
+            <div>
+              <h1>Rock Vincent Guitard</h1>
+              <p>Figuring out AI and pushing things to the web.</p>
+            </div>
+            <span className="title-sub">🇨🇦 Gatineau, QC</span>
+          </header>
+        </div>
 
         <div className="section-marquee work-marquee" aria-hidden="true">
           <div className="marquee-track marquee-left">
@@ -164,12 +176,12 @@ export default function Home() {
         <section className="life-section">
           <div className="section-marquee about-marquee" aria-hidden="true">
             <div className="marquee-track marquee-right">
-              <span>NOW MORE ABOUT ME? HERE? SATISFIED?</span>
-              <span>NOW MORE ABOUT ME? HERE? SATISFIED?</span>
+              <span>A LIL MORE ABOUT ME A LIL MORE ABOUT ME</span>
+              <span>A BIT ABOUT ROCK, NOT THE ROCK</span>
             </div>
             <div className="marquee-track marquee-left">
-              <span>NOW MORE ABOUT ME? HERE? SATISFIED?</span>
-              <span>NOW MORE ABOUT ME? HERE? SATISFIED?</span>
+              <span>A LIL MORE ABOUT ME A LIL MORE ABOUT ME</span>
+              <span>A BIT ABOUT ROCK, NOT THE ROCK</span>
             </div>
           </div>
 

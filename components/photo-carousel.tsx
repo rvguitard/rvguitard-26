@@ -6,19 +6,19 @@ const withBasePath = (path: string) => `${basePath}${path}`;
 const photos = [
   {
     alt: "Rock smiling by Mount Fuji in Japan",
-    caption: "Japan walks",
+    caption: "Cycling Fujikawaguchiko",
     objectPosition: "38% 50%",
     src: "/photos/japan.webp",
   },
   {
     alt: "A misty lighthouse view in Vancouver",
-    caption: "Coastal weather",
+    caption: "Vancouver island",
     objectPosition: "50% 50%",
     src: "/photos/vancouver.webp",
   },
   {
     alt: "Tuna the dog sitting in a laundry basket",
-    caption: "Small assistant",
+    caption: "Laundry assistant, Tuna",
     objectPosition: "52% 42%",
     src: "/photos/tuna.webp",
   },
