@@ -27,16 +27,16 @@ type Particle = {
 };
 
 const FLOATIES = [
-  { emoji: "🐶", color: "rgba(244, 226, 222, 0.78)", x: 0.25, y: 0.16, radius: 36 },
-  { emoji: "✈️", color: "rgba(226, 245, 255, 0.86)", x: 0.72, y: 0.12, radius: 29 },
-  { emoji: "🏸", color: "rgba(248, 246, 228, 0.8)", x: 0.54, y: 0.42, radius: 28 },
-  { emoji: "🐰", color: "rgba(226, 247, 229, 0.82)", x: 0.82, y: 0.38, radius: 30 },
-  { emoji: "🥋", color: "rgba(226, 249, 246, 0.8)", x: 0.18, y: 0.64, radius: 27 },
-  { emoji: "🍿", color: "rgba(226, 240, 255, 0.84)", x: 0.39, y: 0.79, radius: 40 },
-  { emoji: "🌧", color: "rgba(241, 230, 252, 0.82)", x: 0.72, y: 0.8, radius: 24 },
-  { emoji: "🥊", color: "rgba(237, 228, 244, 0.85)", x: 0.99, y: 0.63, radius: 28 },
-  { emoji: "🕺", color: "rgba(228, 244, 231, 0.85)", x: 0.05, y: 0.3, radius: 28 },
-  { emoji: "🎮", color: "rgba(230, 228, 244, 0.85)", x: 0.16, y: 0.5, radius: 28 },
+  { emoji: "🐶", color: "oklch(92.61% 0.0206 32.53 / 0.78)", x: 0.25, y: 0.16, radius: 36 },
+  { emoji: "✈️", color: "oklch(95.91% 0.0242 230.43 / 0.86)", x: 0.72, y: 0.12, radius: 29 },
+  { emoji: "🏸", color: "oklch(96.99% 0.0238 101.67 / 0.8)", x: 0.54, y: 0.42, radius: 28 },
+  { emoji: "🐰", color: "oklch(95.58% 0.0325 149.56 / 0.82)", x: 0.82, y: 0.38, radius: 30 },
+  { emoji: "🥋", color: "oklch(96.45% 0.0244 187.33 / 0.8)", x: 0.18, y: 0.64, radius: 27 },
+  { emoji: "🍿", color: "oklch(94.92% 0.0252 249.95 / 0.84)", x: 0.39, y: 0.79, radius: 40 },
+  { emoji: "🌧", color: "oklch(94.01% 0.0315 308.09 / 0.82)", x: 0.72, y: 0.8, radius: 24 },
+  { emoji: "🥊", color: "oklch(93.06% 0.0234 310.7 / 0.85)", x: 0.99, y: 0.63, radius: 28 },
+  { emoji: "🕺", color: "oklch(95.17% 0.0241 151.18 / 0.85)", x: 0.05, y: 0.3, radius: 28 },
+  { emoji: "🎮", color: "oklch(92.51% 0.0216 291.72 / 0.85)", x: 0.16, y: 0.5, radius: 28 },
 ];
 
 function createFloaties(width: number, height: number): Floatie[] {

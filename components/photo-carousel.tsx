@@ -22,6 +22,12 @@ const photos = [
     objectPosition: "52% 42%",
     src: "/photos/tuna.webp",
   },
+   {
+    alt: "Our wedding!",
+    caption: "August 3, 2024",
+    objectPosition: "52% 42%",
+    src: "/photos/wedding.png",
+  },
 ];
 
 const carouselPhotos = [...photos, ...photos];

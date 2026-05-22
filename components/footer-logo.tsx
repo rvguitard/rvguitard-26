@@ -1,6 +1,26 @@
+"use client";
+
+import { useEffect, useState } from "react";
+
 export function FooterLogo() {
+  const [isDiscoMode, setIsDiscoMode] = useState(false);
+
+  useEffect(() => {
+    document.documentElement.classList.toggle("is-disco", isDiscoMode);
+
+    return () => {
+      document.documentElement.classList.remove("is-disco");
+    };
+  }, [isDiscoMode]);
+
   return (
-    <span className="footer-logo" aria-label="Rock Vincent Guitard mark" role="img">
+    <button
+      className="footer-logo"
+      type="button"
+      aria-label={isDiscoMode ? "Turn disco mode off" : "Turn disco mode on"}
+      aria-pressed={isDiscoMode}
+      onClick={() => setIsDiscoMode((current) => !current)}
+    >
       <span className="footer-logo-sparkles" aria-hidden="true">
         <span />
         <span />
@@ -41,6 +61,6 @@ export function FooterLogo() {
           </linearGradient>
         </defs>
       </svg>
-    </span>
+    </button>
   );
 }

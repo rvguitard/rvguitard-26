@@ -26,7 +26,7 @@ const testimonials: Testimonial[] = [
   },
   {
     quote: "“Rock made the hard parts feel simple and shippable”",
-    name: "Yonnas Masfariam, Program Manager",
+    name: "Yonnas Tesfamariam, Sr. Partner Solutions Engineer",
     company: "Webflow",
   },
   {
@@ -106,7 +106,7 @@ export function TestimonialGrid() {
             <div className={`testimonial-content${isFading ? " is-fading" : ""}`}>
               <p>{testimonial.quote}</p>
               <footer>
-                <span>{testimonial.name}</span>
+                <span className="testimonial-name">{testimonial.name}</span>
                 <span>{testimonial.company}</span>
               </footer>
             </div>

@@ -41,7 +41,6 @@ const reactions: Reaction[] = [
 ];
 
 const selectedKey = "rvg-reaction-selected-visit";
-const showReactionReset = process.env.NODE_ENV !== "production";
 const reactionBaseSlot = 24;
 const reactionGap = 2;
 
@@ -232,23 +231,8 @@ export function ReactionStrip() {
     setCounts(rowsToCounts(data as ReactionCountRow[]));
   }
 
-  function handleResetReaction() {
-    resetReactionState();
-    setSelectedReaction(null);
-  }
-
   return (
     <div className="reaction-strip" aria-label="Reactions">
-      {showReactionReset && (
-        <button
-          aria-label="Reset reactions for testing"
-          className="reaction-reset"
-          onClick={handleResetReaction}
-          type="button"
-        >
-          ↺
-        </button>
-      )}
       <div className="reaction-list" ref={reactionListRef}>
         {reactions.map((reaction, index) => {
           const count = counts[reaction.id] ?? 0;

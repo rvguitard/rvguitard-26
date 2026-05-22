@@ -22,7 +22,6 @@ type MessageRow = {
 
 const submittedDayKey = "rvg-message-board-submitted-day";
 const messagesCacheKey = "rvg-message-board-cache";
-const showMessageReset = process.env.NODE_ENV !== "production";
 const starterMessages: BoardMessage[] = [
   {
     id: "starter-1",
@@ -280,24 +279,8 @@ export function MessageBoard() {
     });
   }
 
-  function handleResetMessages() {
-    resetMessageState();
-    setSubmittedDay(null);
-  }
-
   return (
     <section className="chat-card" aria-label="Message board">
-      {showMessageReset && (
-        <button
-          aria-label="Reset messages for testing"
-          className="message-reset"
-          onClick={handleResetMessages}
-          type="button"
-        >
-          ↺
-        </button>
-      )}
-
       <div
         className={`message-history ${hasSyncedMessages ? "is-synced" : "is-syncing"}`}
         ref={historyRef}
