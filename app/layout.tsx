@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Geist, Geist_Mono, Inclusive_Sans } from "next/font/google";
 
 import "./globals.css";
 
@@ -11,6 +11,12 @@ const geist = Geist({
 const geistMono = Geist_Mono({
   subsets: ["latin"],
   variable: "--font-geist-mono",
+});
+
+const inclusiveSans = Inclusive_Sans({
+  subsets: ["latin"],
+  variable: "--font-inclusive-sans",
+  weight: ["500", "700"],
 });
 
 export const metadata: Metadata = {
@@ -27,7 +33,7 @@ export default function RootLayout({
     <html
       lang="en"
       data-scroll-behavior="smooth"
-      className={`${geist.variable} ${geistMono.variable}`}
+      className={`${geist.variable} ${geistMono.variable} ${inclusiveSans.variable}`}
     >
       <body suppressHydrationWarning>{children}</body>
     </html>

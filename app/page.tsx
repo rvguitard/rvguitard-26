@@ -14,6 +14,7 @@ import { VisualTile } from "@/components/visual-tile";
 const basePath = process.env.NEXT_PUBLIC_BASE_PATH || "";
 const withBasePath = (path: string) => `${basePath}${path}`;
 const previewVideoSrc = withBasePath("/videos/qualified-hp-1778982945862.mp4");
+const aiPromptCount = 74;
 
 const visualTiles = [
   {
@@ -52,6 +53,14 @@ const freelanceProjects = [
   { label: "muuvment.com", href: "https://muuvment.com" },
   { label: "cawu.ca", href: "https://cawu.ca" },
   { label: "gale.agency", href: "https://gale.agency" },
+];
+
+const experiments = [
+  {
+    status: "WIP",
+    title: "CSS Spritesheet Keyframe Slicer",
+    type: "Tool",
+  },
 ];
 
 const people = [
@@ -174,14 +183,15 @@ export default function Home() {
           </a>
 
           <div className="project-copy">
-            <p>
-              Together with our internet team, we built the Qualified marketing website from the ground up. The platform evolved into a large-scale ecosystem spanning three Webflow projects and two external portals, supporting hundreds of pages across live events, content libraries, infographics playbooks, guides, and more.
-            </p>
             <ul className="project-tools" aria-label="Tools used">
               {["Webflow", "Gainsight", "Skilljar"].map((tool) => (
                 <li key={tool}>{tool}</li>
               ))}
             </ul>
+            <p>
+              Together with our internet team, we built the Qualified marketing website from the ground up. The platform evolved into a large-scale ecosystem spanning three Webflow projects and two external portals, supporting hundreds of pages across live events, content libraries, infographics playbooks, guides, and more.
+            </p>
+            
           </div>
 
           <div className="visual-grid">
@@ -203,6 +213,49 @@ export default function Home() {
                 <span className="freelance-url">{project.label}</span>
                 <span className="title-sub">Freelance</span>
               </a>
+            ))}
+          </div>
+
+          
+
+          <div className="section-marquee message-marquee" aria-hidden="true">
+            <div className="marquee-field">
+              <div className="marquee-track marquee-left">
+                <span>WEBEXPERIMENTSWEBEXPERIMENTSWEBEXPERIMENTS</span>
+                <span>UIEXPLORATIONSUIEXPLORATIONSUIEXPLORATIONS</span>
+              </div>
+              <div className="marquee-track marquee-right">
+                <span>INTERACTICEDEMOSINTERACTICEDEMOSINTERACTICEDEMOS</span>
+                <span>RANDOMAISTUFFRANDOMAISTUFFRANDOMAISTUFFRANDOMAISTUFF</span>
+              </div>
+              <div className="marquee-track marquee-left">
+                <span>WEBEXPERIMENTSWEBEXPERIMENTSWEBEXPERIMENTS</span>
+                <span>UIEXPLORATIONSUIEXPLORATIONSUIEXPLORATIONS</span>
+              </div>
+              <div className="marquee-track marquee-right">
+                <span>INTERACTICEDEMOSINTERACTICEDEMOSINTERACTICEDEMOS</span>
+                <span>RANDOMAISTUFFRANDOMAISTUFFRANDOMAISTUFFRANDOMAISTUFF</span>
+              </div>
+              <div className="marquee-track marquee-left">
+                <span>WEBEXPERIMENTSWEBEXPERIMENTSWEBEXPERIMENTS</span>
+                <span>UIEXPLORATIONSUIEXPLORATIONSUIEXPLORATIONS</span>
+              </div>
+              <div className="marquee-track marquee-left">
+                <span>LEAVEAMESSAGE LEAVEAMESSAGE LEAVEAMESSAGE</span>
+                <span>LEAVEAMESSAGE LEAVEAMESSAGE LEAVEAMESSAGE</span>
+              </div>
+            </div>
+          </div>
+
+<div className="experiments-list" aria-label="Experiments">
+            {experiments.map((experiment) => (
+              <div key={experiment.title} className="experiment-row">
+                <span className="experiment-main">
+                  <span className="experiment-status">{experiment.status}</span>
+                  <span className="experiment-title">{experiment.title}</span>
+                </span>
+                <span className="title-sub">{experiment.type}</span>
+              </div>
             ))}
           </div>
 
@@ -292,7 +345,7 @@ export default function Home() {
               <a href="https://linkedin.com">LinkedIn ↗</a>
             </nav>
             <a href="mailto:rvguitard@gmail.com">rvguitard@gmail.com</a>
-            <small>© Rock Vincent Guitard 2026</small>
+            <small>Built by prompting AI, about {aiPromptCount.toLocaleString()} times.</small>
           </footer>
         </section>
       </article>
