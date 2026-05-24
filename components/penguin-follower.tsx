@@ -1,16 +1,52 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { CSSProperties, useEffect, useRef, useState } from "react";
 
 const PENGUIN_SIZE = 64;
 const VIEWPORT_PADDING = 12;
 const REACTION_DURATION_MS = 900;
+const CELEBRATION_DURATION_MS = 1600;
 const FOLLOW_EASE = 0.08;
+const WALK_CYCLE_MS = 17000;
+const WALK_DISTANCE = 10;
 const basePath = process.env.NEXT_PUBLIC_BASE_PATH || "";
-type ReactionFrame = "page" | "uno" | null;
+type ReactionFrame = "page" | "uno" | "celebrate" | null;
+type PenguinFollowerStyle = CSSProperties & {
+  "--penguin-y": string;
+  "--penguin-x": string;
+  "--penguin-facing": string;
+};
+type WalkState = {
+  facing: -1 | 1;
+  isWalking: boolean;
+  x: number;
+};
+
+function getWalkState(time: number): WalkState {
+  const elapsed = time % WALK_CYCLE_MS;
+
+  if (elapsed < 5000) {
+    return { facing: -1, isWalking: false, x: 0 };
+  }
+
+  if (elapsed < 7000) {
+    return { facing: 1, isWalking: true, x: ((elapsed - 5000) / 2000) * WALK_DISTANCE };
+  }
+
+  if (elapsed < 10000) {
+    return { facing: 1, isWalking: false, x: WALK_DISTANCE };
+  }
+
+  if (elapsed < 12000) {
+    return { facing: -1, isWalking: true, x: WALK_DISTANCE - ((elapsed - 10000) / 2000) * WALK_DISTANCE };
+  }
+
+  return { facing: -1, isWalking: false, x: 0 };
+}
 
 export function PenguinFollower() {
   const [y, setY] = useState(132);
+  const [walkState, setWalkState] = useState<WalkState>({ facing: -1, isWalking: false, x: 0 });
   const [reactionFrame, setReactionFrame] = useState<ReactionFrame>(null);
   const [isTooltipVisible, setIsTooltipVisible] = useState(false);
   const followerRef = useRef<HTMLDivElement>(null);
@@ -42,6 +78,7 @@ export function PenguinFollower() {
       const nextY = currentYRef.current + (targetYRef.current - currentYRef.current) * FOLLOW_EASE;
       currentYRef.current = Math.abs(nextY - targetYRef.current) < 0.1 ? targetYRef.current : nextY;
       setY(currentYRef.current);
+      setWalkState(getWalkState(window.performance.now()));
       animationFrame = window.requestAnimationFrame(followTarget);
     };
 
@@ -69,8 +106,14 @@ export function PenguinFollower() {
       if (event.target instanceof Node && followerRef.current?.contains(event.target)) return;
       triggerPenguinReaction("page");
     };
+    const handleUnoCelebrate = () => {
+      window.clearTimeout(reactionTimeoutRef.current);
+      setReactionFrame("celebrate");
+      reactionTimeoutRef.current = window.setTimeout(() => setReactionFrame(null), CELEBRATION_DURATION_MS);
+    };
     window.addEventListener("pointermove", handlePointerMove, { passive: true });
     window.addEventListener("mousemove", handleMouseMove, { passive: true });
+    window.addEventListener("rvg:uno-celebrate", handleUnoCelebrate);
     document.addEventListener("pointerdown", handleDocumentPointerDown, clickListenerOptions);
     animationFrame = window.requestAnimationFrame(followTarget);
 
@@ -79,6 +122,7 @@ export function PenguinFollower() {
       window.clearTimeout(reactionTimeoutRef.current);
       window.removeEventListener("pointermove", handlePointerMove);
       window.removeEventListener("mousemove", handleMouseMove);
+      window.removeEventListener("rvg:uno-celebrate", handleUnoCelebrate);
       document.removeEventListener("pointerdown", handleDocumentPointerDown, clickListenerOptions);
     };
   }, []);
@@ -88,13 +132,20 @@ export function PenguinFollower() {
   };
 
   const reactionClass = reactionFrame ? ` is-reacting-${reactionFrame}` : "";
+  const walkingClass = walkState.isWalking && !reactionFrame ? " is-walking" : "";
 
   return (
     <div
       ref={followerRef}
       className={isTooltipVisible ? "penguin-follower is-tooltip-visible" : "penguin-follower"}
       data-tooltip="Hi I'm Rock's Codex pet, Uno"
-      style={{ transform: `translateY(${Math.round(y)}px)` }}
+      style={
+        {
+          "--penguin-y": `${Math.round(y)}px`,
+          "--penguin-x": `${Math.round(walkState.x)}px`,
+          "--penguin-facing": String(walkState.facing),
+        } as PenguinFollowerStyle
+      }
       onPointerDown={handlePenguinPointerDown}
       onPointerEnter={() => setIsTooltipVisible(true)}
       onPointerLeave={() => setIsTooltipVisible(false)}
@@ -103,7 +154,7 @@ export function PenguinFollower() {
       aria-hidden="true"
     >
       <div
-        className={`penguin-animator${reactionClass}`}
+        className={`penguin-animator${reactionClass}${walkingClass}`}
         style={{ backgroundImage: `url("${basePath}/assets/penguin.png")` }}
       />
     </div>

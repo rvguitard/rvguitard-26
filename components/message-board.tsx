@@ -1,6 +1,6 @@
 "use client";
 
-import { FormEvent, useEffect, useMemo, useRef, useState } from "react";
+import { CSSProperties, FormEvent, useEffect, useMemo, useRef, useState } from "react";
 import { supabase } from "@/lib/supabase";
 import { getVisitorId } from "@/lib/visitor-id";
 import {
@@ -20,8 +20,35 @@ type MessageRow = {
   created_at: string;
 };
 
+type MessageBubbleStyle = CSSProperties & {
+  "--message-bg": string;
+  "--message-color": string;
+  "--message-border": string;
+};
+
 const submittedDayKey = "rvg-message-board-submitted-day";
 const messagesCacheKey = "rvg-message-board-cache";
+const messagePalettes = [
+  { background: "oklch(94.5% 0.032 185)", color: "oklch(31% 0.04 190)", border: "oklch(72% 0.055 185 / 0.26)" },
+  { background: "oklch(95% 0.03 292)", color: "oklch(32% 0.05 292)", border: "oklch(74% 0.06 292 / 0.24)" },
+  { background: "oklch(95.2% 0.034 92)", color: "oklch(33% 0.045 82)", border: "oklch(76% 0.06 88 / 0.24)" },
+  { background: "oklch(94.6% 0.032 34)", color: "oklch(33% 0.045 32)", border: "oklch(75% 0.055 36 / 0.24)" },
+  { background: "oklch(95% 0.03 325)", color: "oklch(33% 0.052 320)", border: "oklch(76% 0.058 322 / 0.24)" },
+  { background: "oklch(94.4% 0.03 225)", color: "oklch(32% 0.045 225)", border: "oklch(73% 0.055 220 / 0.24)" },
+  { background: "oklch(94.8% 0.032 145)", color: "oklch(31% 0.045 145)", border: "oklch(72% 0.055 145 / 0.24)" },
+  { background: "oklch(94.8% 0.03 70)", color: "oklch(32% 0.04 68)", border: "oklch(75% 0.055 72 / 0.24)" },
+];
+
+function getMessageBubbleStyle(index: number): MessageBubbleStyle {
+  const palette = messagePalettes[index % messagePalettes.length];
+
+  return {
+    "--message-bg": palette.background,
+    "--message-color": palette.color,
+    "--message-border": palette.border,
+  };
+}
+
 const starterMessages: BoardMessage[] = [
   {
     id: "starter-1",
@@ -289,6 +316,7 @@ export function MessageBoard() {
           <div
             className={`bubble ${index % 2 === 0 ? "incoming" : "outgoing"}`}
             key={message.id}
+            style={getMessageBubbleStyle(index)}
           >
             {message.body}
           </div>

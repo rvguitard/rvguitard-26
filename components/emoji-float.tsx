@@ -38,6 +38,7 @@ const FLOATIES = [
   { emoji: "🕺", color: "oklch(95.17% 0.0241 151.18 / 0.85)", x: 0.05, y: 0.3, radius: 28 },
   { emoji: "🎮", color: "oklch(92.51% 0.0216 291.72 / 0.85)", x: 0.16, y: 0.5, radius: 28 },
 ];
+const emojiGoal = 50;
 
 function createFloaties(width: number, height: number): Floatie[] {
   return FLOATIES.map((item, index) => ({
@@ -76,7 +77,19 @@ export function EmojiFloat({ initialCount = 0 }: { initialCount?: number }) {
   const floatiesRef = useRef<Floatie[]>([]);
   const particlesRef = useRef<Particle[]>([]);
   const animationRef = useRef<number | null>(null);
+  const hasReachedGoalRef = useRef(initialCount >= emojiGoal);
   const [count, setCount] = useState(initialCount);
+  const [hasReachedGoal, setHasReachedGoal] = useState(initialCount >= emojiGoal);
+
+  useEffect(() => {
+    if (count < emojiGoal || hasReachedGoalRef.current) {
+      return;
+    }
+
+    hasReachedGoalRef.current = true;
+    setHasReachedGoal(true);
+    window.dispatchEvent(new CustomEvent("rvg:uno-celebrate"));
+  }, [count]);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -192,7 +205,11 @@ export function EmojiFloat({ initialCount = 0 }: { initialCount?: number }) {
   }, []);
 
   return (
-    <div ref={fieldRef} className="emoji-field" aria-label="My life in emojis">
+    <div
+      ref={fieldRef}
+      className={hasReachedGoal ? "emoji-field has-reached-goal" : "emoji-field"}
+      aria-label="My life in emojis"
+    >
       <canvas ref={canvasRef} className="emoji-canvas" />
       <h2>My life in emojis</h2>
       <span className="boxing-score">{count}</span>

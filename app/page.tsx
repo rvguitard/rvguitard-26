@@ -1,6 +1,7 @@
 import Image from "next/image";
 
 import { EmojiFloat } from "@/components/emoji-float";
+import { CursorPresence } from "@/components/experiments/CursorPresence";
 import { FooterLogo } from "@/components/footer-logo";
 import { LedClock } from "@/components/led-clock";
 import { MessageBoard } from "@/components/message-board";
@@ -14,7 +15,7 @@ import { VisualTile } from "@/components/visual-tile";
 const basePath = process.env.NEXT_PUBLIC_BASE_PATH || "";
 const withBasePath = (path: string) => `${basePath}${path}`;
 const previewVideoSrc = withBasePath("/videos/qualified-hp-1778982945862.mp4");
-const aiPromptCount = 74;
+const aiPromptCount = 101;
 
 const visualTiles = [
   {
@@ -73,6 +74,7 @@ const people = [
 export default function Home() {
   return (
     <main className="portfolio-shell">
+      <CursorPresence />
       <PenguinFollower />
       <MusicPlayer />
 
