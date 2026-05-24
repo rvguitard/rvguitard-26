@@ -15,7 +15,7 @@ import { VisualTile } from "@/components/visual-tile";
 const basePath = process.env.NEXT_PUBLIC_BASE_PATH || "";
 const withBasePath = (path: string) => `${basePath}${path}`;
 const previewVideoSrc = withBasePath("/videos/qualified-hp-1778982945862.mp4");
-const aiPromptCount = 101;
+const aiPromptCount = 107;
 
 const visualTiles = [
   {
