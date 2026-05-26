@@ -19,7 +19,7 @@ const channelName = "portfolio-cursors";
 const guestStorageKey = "rvg-cursor-presence-guest";
 const inactiveAfterMs = 10_000;
 const sendIntervalMs = 50;
-const maxTrailPoints = 18;
+const maxTrailPoints = 6;
 const showDebugCounter = false;
 
 const cursorProfiles = [
@@ -77,6 +77,7 @@ export function CursorPresence() {
   const profileRef = useRef<CursorProfile | null>(null);
   const cursorsRef = useRef(new Map<string, RemoteCursorState>());
   const lastSentAtRef = useRef(0);
+  const isSubscribedRef = useRef(false);
 
   useEffect(() => {
     const updateSupport = () => {
@@ -114,6 +115,10 @@ export function CursorPresence() {
     });
 
     const publishCursor = (event: PointerEvent) => {
+      if (!isSubscribedRef.current) {
+        return;
+      }
+
       const now = window.performance.now();
 
       if (now - lastSentAtRef.current < sendIntervalMs) {
@@ -182,6 +187,7 @@ export function CursorPresence() {
       })
       .subscribe((status) => {
         if (status === "SUBSCRIBED") {
+          isSubscribedRef.current = true;
           channel.track({
             color: profile.color,
             emoji: profile.emoji,
@@ -189,6 +195,8 @@ export function CursorPresence() {
             label: profile.label,
             onlineAt: new Date().toISOString(),
           });
+        } else {
+          isSubscribedRef.current = false;
         }
       });
 
@@ -198,6 +206,7 @@ export function CursorPresence() {
       window.clearInterval(inactiveInterval);
       window.removeEventListener("pointermove", publishCursor);
       cursorsRef.current.clear();
+      isSubscribedRef.current = false;
       setRemoteCursors([]);
       supabase.removeChannel(channel);
     };

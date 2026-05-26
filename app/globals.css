@@ -310,7 +310,7 @@ a {
 }
 
 .intro-panel p {
-  margin: 8px 0 0;
+  margin: 4px 0 0;
   font-size: 14px;
   color: oklch(57.04% 0.0369 83.6);
 }
@@ -1931,38 +1931,18 @@ background-size: 10px 10px;
   position: fixed;
   top: 0;
   left: 0;
-  display: grid;
-  gap: 4px;
-  justify-items: start;
-  opacity: 0.92;
+  opacity: 0.58;
   pointer-events: none;
   transition: transform 90ms linear, opacity 240ms ease;
   will-change: transform;
 }
 
 .remote-cursor-pointer {
-  width: 10px;
-  height: 14px;
+  width: 8px;
+  height: 11px;
   background: var(--cursor-color);
   clip-path: polygon(0 0, 0 100%, 34% 72%, 58% 100%, 78% 88%, 54% 60%, 100% 60%);
-  filter: drop-shadow(0 1px 2px oklch(0% 0 0 / 0.2));
-}
-
-.remote-cursor-badge {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  margin: 2px 0 0 8px;
-  padding: 3px 6px;
-  border: 1px solid color-mix(in oklch, var(--cursor-color), oklch(100% 0 0) 42%);
-  border-radius: 5px;
-  background: oklch(100% 0 0 / 0.82);
-  box-shadow: 0 4px 14px oklch(0% 0 0 / 0.1);
-  color: oklch(28% 0.03 270);
-  font-size: 10px;
-  font-weight: 700;
-  line-height: 1;
-  backdrop-filter: blur(6px);
+  filter: drop-shadow(0 1px 1px oklch(0% 0 0 / 0.16));
 }
 
 .cursor-presence-debug {

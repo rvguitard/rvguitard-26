@@ -68,10 +68,10 @@ export function CursorTrailCanvas({ cursors, disabled = false }: CursorTrailCanv
         for (let index = 1; index < points.length; index += 1) {
           const previous = points[index - 1];
           const current = points[index];
-          const alpha = (index / points.length) * 0.28;
+          const alpha = (index / points.length) * 0.12;
 
           context.strokeStyle = `rgba(${rgb.red}, ${rgb.green}, ${rgb.blue}, ${alpha})`;
-          context.lineWidth = 1 + (index / points.length) * 2;
+          context.lineWidth = 0.75 + (index / points.length) * 0.85;
           context.lineCap = "round";
           context.beginPath();
           context.moveTo(previous.x, previous.y);

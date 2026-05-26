@@ -145,7 +145,7 @@ function dedupeMessages(messages: BoardMessage[]) {
 
 export function MessageBoard() {
   const [draft, setDraft] = useState("");
-  const [messages, setMessages] = useState<BoardMessage[]>(getCachedMessages);
+  const [messages, setMessages] = useState<BoardMessage[]>(starterMessages);
   const [submittedDay, setSubmittedDay] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [hasSyncedMessages, setHasSyncedMessages] = useState(false);
@@ -157,6 +157,7 @@ export function MessageBoard() {
 
   useEffect(() => {
     setSubmittedDay(getSubmittedDay());
+    setMessages(getCachedMessages());
 
     if (!supabase) {
       return;
@@ -316,6 +317,7 @@ export function MessageBoard() {
           <div
             className={`bubble ${index % 2 === 0 ? "incoming" : "outgoing"}`}
             key={message.id}
+            suppressHydrationWarning
             style={getMessageBubbleStyle(index)}
           >
             {message.body}
