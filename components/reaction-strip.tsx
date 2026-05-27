@@ -237,7 +237,7 @@ export function ReactionStrip() {
         {reactions.map((reaction, index) => {
           const count = counts[reaction.id] ?? 0;
           const isSelected = selectedReaction === reaction.id;
-          const reactionScale = rawScales[index] * fitRatio;
+          const reactionScale = rawScales[index];
           const reactionSlotSize = reactionBaseSlot * reactionScale;
           const buttonStyle = {
             "--reaction-scale": reactionScale,

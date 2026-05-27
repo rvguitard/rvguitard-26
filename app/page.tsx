@@ -4,6 +4,7 @@ import { EmojiFloat } from "@/components/emoji-float";
 import { CursorPresence } from "@/components/experiments/CursorPresence";
 import { FooterLogo } from "@/components/footer-logo";
 import { LedClock } from "@/components/led-clock";
+import { LedWord } from "@/components/led-word";
 import { MessageBoard } from "@/components/message-board";
 import { MusicPlayer } from "@/components/music-player";
 import { PenguinFollower } from "@/components/penguin-follower";
@@ -14,39 +15,37 @@ import { VisualTile } from "@/components/visual-tile";
 
 const basePath = process.env.NEXT_PUBLIC_BASE_PATH || "";
 const withBasePath = (path: string) => `${basePath}${path}`;
-const previewVideoSrc = withBasePath("/videos/qualified-hp-1778982945862.mp4");
-const aiPromptCount = 111;
+const aiPromptCount = 128;
 
 const visualTiles = [
   {
     label: "/home",
     className: "tile-home",
-    videoSrc: previewVideoSrc,
+    videoSrc: withBasePath("/videos/qualified-hp-1778982945862.mp4"),
   },
   {
     label: "/2025-year-in-review",
     className: "tile-review",
-    videoSrc: previewVideoSrc,
+    videoSrc: withBasePath("/videos/yir-2025-1779680182485.mp4"),
   },
   {
     label: "/customers",
     className: "tile-customers",
-    videoSrc: previewVideoSrc,
+    videoSrc: withBasePath("/videos/customers-1779762801746.mp4"),
   },
   {
     label: "/university",
     className: "tile-university",
-    videoSrc: previewVideoSrc,
   },
   {
     label: "/plus",
     className: "tile-plus",
-    videoSrc: previewVideoSrc,
+    videoSrc: withBasePath("/videos/plus-1779763231797.mp4"),
   },
   {
     label: "/resources/roi-calculator",
     className: "tile-calculator",
-    videoSrc: previewVideoSrc,
+    videoSrc: withBasePath("/videos/roi-calc-1779762480547.mp4"),
   },
 ];
 
@@ -60,6 +59,11 @@ const experiments = [
   {
     status: "WIP",
     title: "CSS Spritesheet Keyframe Slicer",
+    type: "Tool",
+  },
+  {
+    status: "WIP",
+    title: "CA$INO, an LED Display Generator",
     type: "Tool",
   },
 ];
@@ -129,6 +133,10 @@ export default function Home() {
             </div>
           </div>
         </div>
+
+        <section className="led-word-panel" aria-label="Work">
+          <LedWord text="Work" />
+        </section>
 
         <section id="work" className="project-card">
           <a href="https://qualified.com" className="project-topline">
@@ -339,7 +347,14 @@ export default function Home() {
           <PhotoCarousel />
 
           <footer className="site-footer">
-            <p>More coming soon...</p>
+            <p className="coming-soon">
+              <span>More coming soon</span>
+              <span className="coming-soon-dots" aria-hidden="true">
+                <span>.</span>
+                <span>.</span>
+                <span>.</span>
+              </span>
+            </p>
             <FooterLogo />
             <nav aria-label="Social links">
               <a href="https://instagram.com">Instagram ↗</a>

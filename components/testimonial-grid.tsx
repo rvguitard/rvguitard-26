@@ -15,7 +15,7 @@ const testimonials: Testimonial[] = [
     company: "LATAM Professionals",
   },
   {
-    quote: "“Rock helped us move faster without losing the details”",
+    quote: "“It was an absolute pleasure to work with Rock”",
     name: "Ohad Tzur, Founder",
     company: "Kahoona",
   },
@@ -25,14 +25,14 @@ const testimonials: Testimonial[] = [
     company: "Qualified",
   },
   {
-    quote: "“Rock made the hard parts feel simple and shippable”",
+    quote: "“Rock consistently delivers polished, high-quality work with fast turnarounds and sharp communication. Reliable people are rare. Rock's one of them.”",
     name: "Yonnas Tesfamariam, Sr. Partner Solutions Engineer",
     company: "Webflow",
   },
   {
-    quote: "“The site felt considered from the first pass”",
-    name: "Arielle Santos, Marketing Lead",
-    company: "Northstar",
+    quote: "“Rock is extremely detail oriented and communicates with stakeholders flawlessly.”",
+    name: "Todd Swain, Program Manager",
+    company: "Qualified",
   },
   {
     quote: "“He can translate a loose idea into something real very quickly”",

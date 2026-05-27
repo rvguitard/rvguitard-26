@@ -8,6 +8,9 @@
   --separator-size: 1px;
   --paper: oklch(97.06% 0.0057 84.57);
   --soft: oklch(93.77% 0.0128 86.83);
+  --scrollbar-track: oklch(96.5% 0.006 85 / 0.64);
+  --scrollbar-thumb: oklch(70% 0.028 82 / 0.58);
+  --scrollbar-thumb-hover: oklch(58% 0.04 76 / 0.72);
 }
 
 * {
@@ -17,10 +20,36 @@
 html {
   background: oklch(100% 0 0);
   scroll-behavior: smooth;
+  scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track);
+  scrollbar-width: thin;
 }
 
 html.is-disco {
   background: oklch(16.18% 0.018 285.11);
+  --scrollbar-track: oklch(18% 0.02 285 / 0.72);
+  --scrollbar-thumb: oklch(73% 0.16 236 / 0.58);
+  --scrollbar-thumb-hover: oklch(87% 0.22 142 / 0.76);
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--scrollbar-track);
+}
+
+::-webkit-scrollbar-thumb {
+  border: 3px solid oklch(0% 0 0 / 0);
+  border-radius: 999px;
+  background: var(--scrollbar-thumb);
+  background-clip: padding-box;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--scrollbar-thumb-hover);
+  background-clip: padding-box;
 }
 
 body {
@@ -241,6 +270,37 @@ a {
   flex-direction: column;
   gap: calc(var(--dot-size) * 3);
   animation: led-blink 1s step-start infinite;
+}
+
+.led-word-panel {
+  min-height: 132px;
+  display: grid;
+  place-items: center;
+  background: oklch(100% 0 0);
+}
+
+.led-word {
+  --dot-size: clamp(4px, 1.1vw, 7px);
+  --gap-size: 2px;
+  --led-hue: 50;
+  --led-light: 78%;
+  --led-chroma: 0.14;
+  --led-off: oklch(22% 0.01 80 / 0.08);
+  --led-on: oklch(var(--led-light) var(--led-chroma) var(--led-hue));
+  --led-glow: oklch(80% var(--led-chroma) var(--led-hue) / 0.38);
+  --shimmer-opacity: 0.72;
+  --shimmer-scale: 0.92;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(6px, 1.2vw, 12px);
+}
+
+.led-letter {
+  display: grid;
+  grid-template-columns: repeat(7, var(--dot-size));
+  grid-template-rows: repeat(7, var(--dot-size));
+  gap: var(--gap-size);
 }
 
 @keyframes shimmer {
@@ -535,6 +595,10 @@ p {
   transform: scale(1.015);
 }
 
+.visual-tile.has-video {
+  cursor: zoom-in;
+}
+
 .visual-tile figcaption {
   position: absolute;
   z-index: 1;
@@ -548,6 +612,99 @@ p {
   font-size: 12px;
   font-weight: 400;
   line-height: 1;
+}
+
+.video-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  box-sizing: border-box;
+  width: 100vw;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  min-height: 100dvh;
+  background: oklch(7% 0.01 280 / 0.72);
+  backdrop-filter: blur(8px);
+  animation: video-modal-backdrop-in 220ms ease both;
+}
+
+.video-modal-panel {
+  position: relative;
+  width: min(100%, 1040px);
+  max-height: min(86dvh, 720px);
+  overflow: hidden;
+  background: oklch(0% 0 0);
+  box-shadow: 0 18px 70px oklch(0% 0 0 / 0.32);
+  animation: video-modal-panel-in 220ms ease both;
+  will-change: transform, opacity;
+}
+
+.video-modal.is-closing {
+  animation: video-modal-backdrop-out 180ms ease both;
+}
+
+.video-modal.is-closing .video-modal-panel {
+  animation: video-modal-panel-out 180ms ease both;
+}
+
+.video-modal-player {
+  display: block;
+  width: 100%;
+  max-height: min(86dvh, 720px);
+  background: oklch(0% 0 0);
+}
+
+@keyframes video-modal-backdrop-in {
+  from {
+    background: oklch(7% 0.01 280 / 0);
+    backdrop-filter: blur(0);
+  }
+}
+
+@keyframes video-modal-panel-in {
+  from {
+    opacity: 0;
+    transform: translateY(14px) scale(0.96);
+  }
+
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+}
+
+@keyframes video-modal-backdrop-out {
+  to {
+    background: oklch(7% 0.01 280 / 0);
+    backdrop-filter: blur(0);
+  }
+}
+
+@keyframes video-modal-panel-out {
+  to {
+    opacity: 0;
+    transform: translateY(10px) scale(0.97);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .video-modal,
+  .video-modal-panel {
+    animation: none;
+  }
+}
+
+@media (max-width: 760px) {
+  .video-modal {
+    padding: 12px;
+  }
+
+  .video-modal-panel,
+  .video-modal-player {
+    max-height: 82dvh;
+  }
 }
 
 .tile-home .tile-art {
@@ -1036,8 +1193,29 @@ p {
   overscroll-behavior: contain;
   padding-top: 18px;
   padding-right: 4px;
+  scrollbar-color: oklch(73% 0.045 82 / 0.5) oklch(100% 0 0 / 0);
   scrollbar-width: thin;
   transition: opacity 220ms ease, transform 220ms ease;
+}
+
+.message-history::-webkit-scrollbar {
+  width: 7px;
+}
+
+.message-history::-webkit-scrollbar-track {
+  background: oklch(100% 0 0 / 0);
+}
+
+.message-history::-webkit-scrollbar-thumb {
+  border: 2px solid oklch(0% 0 0 / 0);
+  border-radius: 999px;
+  background: oklch(73% 0.045 82 / 0.5);
+  background-clip: padding-box;
+}
+
+.message-history::-webkit-scrollbar-thumb:hover {
+  background: oklch(60% 0.052 76 / 0.7);
+  background-clip: padding-box;
 }
 
 .message-history::before {
@@ -1607,7 +1785,43 @@ background-size: 10px 10px;
 
 .site-footer p {
   margin: 0 0 82px;
-  font-family: var(--font-geist-mono), "Courier New", Courier, monospace;
+}
+
+.coming-soon {
+  display: inline-flex;
+  align-items: baseline;
+  justify-content: center;
+  gap: 0;
+}
+
+.coming-soon-dots {
+  display: inline-flex;
+  width: 1em;
+}
+
+.coming-soon-dots span {
+  opacity: 0;
+  animation: coming-soon-dots 1200ms steps(1, end) infinite;
+}
+
+@keyframes coming-soon-dots {
+  0%,
+  24% {
+    opacity: 0;
+  }
+
+  25%,
+  100% {
+    opacity: 1;
+  }
+}
+
+.coming-soon-dots span:nth-child(2) {
+  animation-delay: 400ms;
+}
+
+.coming-soon-dots span:nth-child(3) {
+  animation-delay: 800ms;
 }
 
 .footer-logo {
@@ -2259,6 +2473,49 @@ background-size: 10px 10px;
   .message-grid,
   .testimonial-grid {
     grid-template-columns: 1fr;
+  }
+
+  .message-grid {
+    height: auto;
+    max-height: none;
+  }
+
+  .people-card,
+  .chat-card {
+    min-height: 215px;
+  }
+
+  .reaction-strip {
+    overflow-x: auto;
+    overflow-y: hidden;
+    scrollbar-color: oklch(100% 0 0 / 0.5) oklch(100% 0 0 / 0.12);
+    scrollbar-width: thin;
+  }
+
+  .reaction-strip::-webkit-scrollbar {
+    height: 7px;
+  }
+
+  .reaction-strip::-webkit-scrollbar-track {
+    background: oklch(100% 0 0 / 0.12);
+  }
+
+  .reaction-strip::-webkit-scrollbar-thumb {
+    border: 2px solid oklch(0% 0 0 / 0);
+    border-radius: 999px;
+    background: oklch(100% 0 0 / 0.5);
+    background-clip: padding-box;
+  }
+
+  .reaction-strip::-webkit-scrollbar-thumb:hover {
+    background: oklch(100% 0 0 / 0.72);
+    background-clip: padding-box;
+  }
+
+  .reaction-list {
+    width: max-content;
+    min-width: 100%;
+    justify-content: flex-start;
   }
 
   .photo-card {
