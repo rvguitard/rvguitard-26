@@ -3048,10 +3048,6 @@ a {
   transform: translate(0, 0) rotate(0deg);
 }
 
-.testimonial-name {
-  max-width: 24ch;
-}
-
 .project-topline:focus-visible, .project-topline:hover {
   box-shadow:
     0 0 2px 0 oklch(100% 0 0) inset,
@@ -4042,7 +4038,7 @@ background-size: 10px 10px;
 }
 
 .testimonial p {
-  max-width: 200px;
+  text-wrap: pretty;
   margin: 0 0 12px;
   color: oklch(41.38% 0.0013 17.21);
   font-size: 12px;
