@@ -10,9 +10,9 @@ type Testimonial = {
 
 const testimonials: Testimonial[] = [
   {
-    quote: "“It was an absolute pleasure to work with Rock”",
-    name: "Olivia Terceros, Founder",
-    company: "LATAM Professionals",
+    quote: "“His reliability, technical expertise, and professionalism make him an invaluable partner.”",
+    name: "Olivia Terceros, Business & Delivery Lead",
+    company: "Frameworks & Co.",
   },
   {
     quote: "“It was an absolute pleasure to work with Rock”",
@@ -20,12 +20,12 @@ const testimonials: Testimonial[] = [
     company: "Kahoona",
   },
   {
-    quote: "“He brings taste, momentum, and a calm hand to messy web work”",
+    quote: "“Rock gets it done with hustle and integrity. The best part also is he does it with a smile.”",
     name: "Jimmy Cabral, Creative Director",
     company: "Qualified",
   },
   {
-    quote: "“Rock consistently delivers polished, high-quality work with fast turnarounds and sharp communication. Reliable people are rare. Rock's one of them.”",
+    quote: "“Rock consistently delivers polished, high-quality work with fast turnarounds and sharp communication.”",
     name: "Yonnas Tesfamariam, Sr. Partner Solutions Engineer",
     company: "Webflow",
   },
@@ -35,19 +35,9 @@ const testimonials: Testimonial[] = [
     company: "Qualified",
   },
   {
-    quote: "“He can translate a loose idea into something real very quickly”",
-    name: "Maya Chen, Brand Director",
-    company: "Studio Atlas",
-  },
-  {
-    quote: "“Every iteration got sharper, cleaner, and easier to use”",
-    name: "Noah Patel, Product Lead",
-    company: "Orbit",
-  },
-  {
-    quote: "“Rock is the person you want when the launch window is close”",
-    name: "Elena Morris, Growth",
-    company: "Brightline",
+    quote: "“... the student has become the teacher”",
+    name: "Nelson Abalos Jr., Founder",
+    company: "PixelGeek, ThatOneCouple",
   },
 ];
 

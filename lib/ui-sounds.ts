@@ -7,6 +7,7 @@ export type UiSound =
   | "toggleOff"
   | "modalOpen"
   | "modalClose"
+  | "message"
   | "success"
   | "error"
   | "whoosh";
@@ -150,6 +151,11 @@ export async function playUiSound(kind: UiSound, controls = defaultSoundControls
 
   if (kind === "modalClose") {
     playSweep(context, output, now, 1100 * pitchRatio, 360 * pitchRatio, 0.11 * durationRatio, gain * 0.7);
+  }
+
+  if (kind === "message") {
+    playTone(context, output, now, 620 * pitchRatio, 0.055 * durationRatio, gain * 0.38, "triangle");
+    playTone(context, output, now + 0.045 * durationRatio, 880 * pitchRatio, 0.075 * durationRatio, gain * 0.28);
   }
 
   if (kind === "success") {

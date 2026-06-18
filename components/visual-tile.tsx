@@ -110,15 +110,18 @@ export function VisualTile({ className, label, videoSrc }: VisualTileProps) {
           role="dialog"
         >
           <div className="video-modal-panel" onClick={(event) => event.stopPropagation()}>
-            <video
-              autoPlay
-              className="video-modal-player"
-              controls
-              loop
-              muted
-              playsInline
-              src={videoSrc}
-            />
+            <div className="video-modal-frame">
+              <video
+                autoPlay
+                className="video-modal-player"
+                controls
+                loop
+                muted
+                playsInline
+                src={videoSrc}
+              />
+            </div>
+            <p className="video-modal-caption">{label}</p>
           </div>
         </div>,
         document.body,

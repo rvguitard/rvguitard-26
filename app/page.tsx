@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 
 import { EmojiFloat } from "@/components/emoji-float";
 import { CursorPresence } from "@/components/experiments/CursorPresence";
@@ -14,13 +15,13 @@ import { VisualTile } from "@/components/visual-tile";
 
 const basePath = process.env.NEXT_PUBLIC_BASE_PATH || "";
 const withBasePath = (path: string) => `${basePath}${path}`;
-const aiPromptCount = 249;
+const aiPromptCount = 268;
 
 const visualTiles = [
   {
     label: "/home",
     className: "tile-home",
-    videoSrc: withBasePath("/videos/qualified-hp-1778982945862.mp4"),
+    videoSrc: withBasePath("/videos/homepage-1781752637431.mp4"),
   },
   {
     label: "/2025-year-in-review",
@@ -35,6 +36,7 @@ const visualTiles = [
   {
     label: "/university",
     className: "tile-university",
+    videoSrc: withBasePath("/videos/university-1779763091106.mp4"),
   },
   {
     label: "/plus",
@@ -56,14 +58,18 @@ const freelanceProjects = [
 
 const experiments = [
   {
+    accent: "green",
+    href: "/tools/keyframe-slicer",
     status: "WIP",
     title: "CSS Spritesheet Editor",
-    type: "Tool",
+    description: "Slice sprite maps into CSS keyframes.",
   },
   {
+    accent: "blue",
+    href: "/tools/web-tools",
     status: "WIP",
-    title: "CA$INO, an LED Display Generator",
-    type: "Tool",
+    title: "My Toolset",
+    description: "My personal growing directory of useful web tools.",
   },
 ];
 
@@ -71,7 +77,7 @@ const people = [
   { label: "Danny Pellissier, Video/Design", href: "https://www.dannypellissier.com/" },
   { label: "Ran Jing, Web", href: "https://www.ranjingdesign.com/" },
   { label: "Brad Cannady, Motion", href: "https://bradcannady.com/work" },
-  { label: "Tim Choy, Art Director", href: "#" },
+  { label: "Tim Choy, Art Director", href: "https://timchoy.com/" },
 ];
 
 export default function Home() {
@@ -254,13 +260,19 @@ export default function Home() {
 
 <div className="experiments-list" aria-label="Experiments">
             {experiments.map((experiment) => (
-              <div key={experiment.title} className="experiment-row">
+              <Link
+                key={experiment.title}
+                className={`experiment-row experiment-row-${experiment.accent}`}
+                href={experiment.href}
+              >
                 <span className="experiment-main">
-                  <span className="experiment-status">{experiment.status}</span>
-                  <span className="experiment-title">{experiment.title}</span>
+                  <span className="experiment-copy">
+                    <span className="experiment-title">{experiment.title}</span>
+                    <span className="experiment-description">{experiment.description}</span>
+                  </span>
                 </span>
-                <span className="title-sub">{experiment.type}</span>
-              </div>
+                <span className="experiment-status">{experiment.status}</span>
+              </Link>
             ))}
           </div>
 

@@ -1,6 +1,7 @@
 "use client";
 
 import { FormEvent, useRef, useState } from "react";
+import { playUiSound } from "@/lib/ui-sounds";
 
 type UnoGuideChatProps = {
   isOpen: boolean;
@@ -108,6 +109,7 @@ export function UnoGuideChat({ isOpen, onClose }: UnoGuideChatProps) {
           content: data?.text || "I got a little lost there. Try asking me again.",
         },
       ]);
+      void playUiSound("message");
     } catch (requestError) {
       console.error("Uno guide request failed", requestError);
       setMessages([
@@ -118,6 +120,7 @@ export function UnoGuideChat({ isOpen, onClose }: UnoGuideChatProps) {
           content: UNO_FAILURE_MESSAGE,
         },
       ]);
+      void playUiSound("message");
     } finally {
       setIsSending(false);
     }
@@ -158,7 +161,7 @@ export function UnoGuideChat({ isOpen, onClose }: UnoGuideChatProps) {
           ))
         )}
         {isSending ? (
-          <div className="uno-guide-message is-assistant is-thinking">Thinking...</div>
+          <div className="uno-guide-message is-assistant is-thinking">hmm...</div>
         ) : null}
       </div>
 
