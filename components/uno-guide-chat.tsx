@@ -177,12 +177,6 @@ export function UnoGuideChat({ isOpen, onClose }: UnoGuideChatProps) {
         </div>
       ) : null}
 
-      {!chatEndpoint ? (
-        <p className="uno-guide-setup">
-          Add <code>NEXT_PUBLIC_UNO_CHAT_API_URL</code> to connect Uno to the AI SDK endpoint.
-        </p>
-      ) : null}
-
       <form className="uno-guide-chat-form" onSubmit={handleSubmit}>
         <input
           ref={inputRef}

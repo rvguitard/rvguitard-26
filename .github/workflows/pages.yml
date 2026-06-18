@@ -40,6 +40,9 @@ jobs:
         run: npm run build
         env:
           NEXT_PUBLIC_BASE_PATH: /rvguitard-26
+          NEXT_PUBLIC_SUPABASE_URL: https://okwbjcsmqohnjtpxyjkb.supabase.co
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9rd2JqY3NtcW9obmp0cHh5amtiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkwOTgzOTksImV4cCI6MjA5NDY3NDM5OX0.6Z00uBeesqZBMwaqXJJHT9tljzlQWHzT5jiuAma5Rj4
+          NEXT_PUBLIC_UNO_CHAT_API_URL: https://okwbjcsmqohnjtpxyjkb.supabase.co/functions/v1/uno-guide
 
       - name: Preserve Next assets on Pages
         run: touch out/.nojekyll
