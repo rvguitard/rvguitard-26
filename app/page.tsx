@@ -9,13 +9,14 @@ import { MessageBoard } from "@/components/message-board";
 import { MusicPlayer } from "@/components/music-player";
 import { PenguinFollower } from "@/components/penguin-follower";
 import { PhotoCarousel } from "@/components/photo-carousel";
+import { PrivacyModal } from "@/components/privacy-modal";
 import { ReactionStrip } from "@/components/reaction-strip";
 import { TestimonialGrid } from "@/components/testimonial-grid";
 import { VisualTile } from "@/components/visual-tile";
 
 const basePath = process.env.NEXT_PUBLIC_BASE_PATH || "";
 const withBasePath = (path: string) => `${basePath}${path}`;
-const aiPromptCount = 273;
+const aiPromptCount = 285;
 
 const visualTiles = [
   {
@@ -369,6 +370,7 @@ export default function Home() {
               <a href="https://linkedin.com">LinkedIn ↗</a>
             </nav>
             <a href="mailto:rvguitard@gmail.com">rvguitard@gmail.com</a>
+            <PrivacyModal />
             <small>Built by prompting AI, about {aiPromptCount.toLocaleString()} times.</small>
           </footer>
         </section>

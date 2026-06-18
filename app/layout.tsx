@@ -22,7 +22,7 @@ const inclusiveSans = Inclusive_Sans({
 
 export const metadata: Metadata = {
   title: "Rock Vincent Guitard",
-  description: "A narrow, screenshot-inspired design engineer portfolio.",
+  description: "Rock Vincent Guitard's portfolio - Div blocks all over the place, interactive experiments, and tiny bits of internet magic.",
 };
 
 export default function RootLayout({

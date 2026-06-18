@@ -180,6 +180,10 @@ export function UnoGuideChat({ isOpen, onClose }: UnoGuideChatProps) {
         </div>
       ) : null}
 
+      <p className="uno-guide-privacy">
+        Do not share private info. Uno chat may be sent to an AI endpoint.
+      </p>
+
       <form className="uno-guide-chat-form" onSubmit={handleSubmit}>
         <input
           ref={inputRef}

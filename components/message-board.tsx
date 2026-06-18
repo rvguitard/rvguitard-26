@@ -150,6 +150,7 @@ export function MessageBoard() {
   const [submittedDay, setSubmittedDay] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [hasSyncedMessages, setHasSyncedMessages] = useState(false);
+  const [hasConfirmedPublicPost, setHasConfirmedPublicPost] = useState(false);
   const [feedback, setFeedback] = useState<string | null>(null);
   const historyRef = useRef<HTMLDivElement>(null);
   const todayKey = useMemo(() => getTodayKey(), []);
@@ -239,6 +240,13 @@ export function MessageBoard() {
     const visitorId = getVisitorId();
     const form = event.currentTarget;
     const result = validateMessage(String(new FormData(form).get("message") ?? ""));
+
+    if (!hasConfirmedPublicPost) {
+      void playUiSound("error");
+      setHasConfirmedPublicPost(true);
+      setFeedback("Heads up: everything you write here is public. Do not share private info.");
+      return;
+    }
 
     if (!result.ok) {
       void playUiSound("error");
@@ -343,6 +351,7 @@ export function MessageBoard() {
             onChange={(event) => {
               setDraft(event.target.value);
               setFeedback(null);
+              setHasConfirmedPublicPost(false);
             }}
             placeholder="Share a message..."
             type="text"
@@ -354,7 +363,7 @@ export function MessageBoard() {
             disabled={isSubmitting || draft.trim().length === 0}
             type="submit"
           >
-            Submit
+            {hasConfirmedPublicPost ? "Post publicly" : "Submit"}
           </button>
           <span className="message-meter" aria-live="polite">
             {remainingCharacters}
