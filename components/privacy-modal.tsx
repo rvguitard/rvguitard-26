@@ -1,10 +1,16 @@
 "use client";
 
 import { useEffect, useId, useState } from "react";
+import { createPortal } from "react-dom";
 
 export function PrivacyModal() {
   const [isOpen, setIsOpen] = useState(false);
+  const [canPortal, setCanPortal] = useState(false);
   const titleId = useId();
+
+  useEffect(() => {
+    setCanPortal(true);
+  }, []);
 
   useEffect(() => {
     if (!isOpen) {
@@ -27,7 +33,7 @@ export function PrivacyModal() {
         Privacy
       </button>
 
-      {isOpen ? (
+      {isOpen && canPortal ? createPortal(
         <div className="privacy-modal" role="presentation" onMouseDown={() => setIsOpen(false)}>
           <section
             aria-labelledby={titleId}
@@ -54,7 +60,8 @@ export function PrivacyModal() {
               public message removed, email <a href="mailto:rvguitard@gmail.com">rvguitard@gmail.com</a>.
             </p>
           </section>
-        </div>
+        </div>,
+        document.body,
       ) : null}
     </>
   );

@@ -16,7 +16,7 @@ import { VisualTile } from "@/components/visual-tile";
 
 const basePath = process.env.NEXT_PUBLIC_BASE_PATH || "";
 const withBasePath = (path: string) => `${basePath}${path}`;
-const aiPromptCount = 285;
+const aiPromptCount = 287;
 
 const visualTiles = [
   {
