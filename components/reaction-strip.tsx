@@ -2,6 +2,7 @@
 
 import { type CSSProperties, useEffect, useMemo, useRef, useState } from "react";
 import { supabase } from "@/lib/supabase";
+import { playUiSound } from "@/lib/ui-sounds";
 import { getVisitorId } from "@/lib/visitor-id";
 
 type Reaction = {
@@ -191,6 +192,7 @@ export function ReactionStrip() {
     if (!supabase || !visitorId) {
       setSelectedReaction(reactionId);
       saveSelectedReaction(reactionId);
+      void playUiSound("success");
       setCounts((currentCounts) => ({
         ...currentCounts,
         [reactionId]: (currentCounts[reactionId] ?? 0) + 1,
@@ -216,6 +218,7 @@ export function ReactionStrip() {
     setIsSubmitting(false);
 
     if (error || !data) {
+      void playUiSound("error");
       resetReactionState();
       setSelectedReaction(null);
       setCounts((currentCounts) => ({
@@ -228,6 +231,7 @@ export function ReactionStrip() {
       return;
     }
 
+    void playUiSound("success");
     setCounts(rowsToCounts(data as ReactionCountRow[]));
   }
 
@@ -250,6 +254,7 @@ export function ReactionStrip() {
               aria-label={`${reaction.emoji} reaction${count > 0 ? `, ${count}` : ""}`}
               aria-pressed={isSelected}
               className="reaction-button"
+              data-sound-ignore
               disabled={Boolean(selectedReaction) || isSubmitting}
               onClick={() => handleReactionClick(reaction.id)}
               style={buttonStyle}

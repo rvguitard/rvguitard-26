@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono, Inclusive_Sans } from "next/font/google";
+import { UiSoundLayer } from "@/components/ui-sound-layer";
 
 import "./globals.css";
 
@@ -35,7 +36,10 @@ export default function RootLayout({
       data-scroll-behavior="smooth"
       className={`${geist.variable} ${geistMono.variable} ${inclusiveSans.variable}`}
     >
-      <body suppressHydrationWarning>{children}</body>
+      <body suppressHydrationWarning>
+        <UiSoundLayer />
+        {children}
+      </body>
     </html>
   );
 }

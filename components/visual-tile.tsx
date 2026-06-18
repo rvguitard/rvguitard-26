@@ -2,6 +2,7 @@
 
 import { KeyboardEvent, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
+import { playUiSound } from "@/lib/ui-sounds";
 
 type VisualTileProps = {
   className: string;
@@ -48,9 +49,11 @@ export function VisualTile({ className, label, videoSrc }: VisualTileProps) {
     }
 
     setIsModalOpen(true);
+    void playUiSound("modalOpen");
   }
 
   function closeModal() {
+    void playUiSound("modalClose");
     setIsModalClosing(true);
     window.setTimeout(() => {
       setIsModalOpen(false);
@@ -78,6 +81,7 @@ export function VisualTile({ className, label, videoSrc }: VisualTileProps) {
       onPointerEnter={playVideo}
       onPointerLeave={pauseVideo}
       role={videoSrc ? "button" : undefined}
+      data-sound-ignore
       tabIndex={videoSrc ? 0 : undefined}
     >
       {videoSrc ? (

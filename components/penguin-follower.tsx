@@ -1,6 +1,7 @@
 "use client";
 
 import { CSSProperties, useEffect, useRef, useState } from "react";
+import { UnoGuideChat } from "./uno-guide-chat";
 
 const PENGUIN_SIZE = 64;
 const VIEWPORT_PADDING = 12;
@@ -48,8 +49,9 @@ export function PenguinFollower() {
   const [y, setY] = useState(132);
   const [walkState, setWalkState] = useState<WalkState>({ facing: -1, isWalking: false, x: 0 });
   const [reactionFrame, setReactionFrame] = useState<ReactionFrame>(null);
+  const [isGuideOpen, setIsGuideOpen] = useState(false);
   const [isTooltipVisible, setIsTooltipVisible] = useState(false);
-  const followerRef = useRef<HTMLDivElement>(null);
+  const followerRef = useRef<HTMLButtonElement>(null);
   const currentYRef = useRef(132);
   const targetYRef = useRef(132);
   const reactionTimeoutRef = useRef(0);
@@ -135,28 +137,34 @@ export function PenguinFollower() {
   const walkingClass = walkState.isWalking && !reactionFrame ? " is-walking" : "";
 
   return (
-    <div
-      ref={followerRef}
-      className={isTooltipVisible ? "penguin-follower is-tooltip-visible" : "penguin-follower"}
-      data-tooltip="Hi I'm Rock's Codex pet, Uno"
-      style={
-        {
-          "--penguin-y": `${Math.round(y)}px`,
-          "--penguin-x": `${Math.round(walkState.x)}px`,
-          "--penguin-facing": String(walkState.facing),
-        } as PenguinFollowerStyle
-      }
-      onPointerDown={handlePenguinPointerDown}
-      onPointerEnter={() => setIsTooltipVisible(true)}
-      onPointerLeave={() => setIsTooltipVisible(false)}
-      onMouseEnter={() => setIsTooltipVisible(true)}
-      onMouseLeave={() => setIsTooltipVisible(false)}
-      aria-hidden="true"
-    >
-      <div
-        className={`penguin-animator${reactionClass}${walkingClass}`}
-        style={{ backgroundImage: `url("${basePath}/assets/penguin.png")` }}
-      />
-    </div>
+    <>
+      <button
+        ref={followerRef}
+        className={isTooltipVisible ? "penguin-follower is-tooltip-visible" : "penguin-follower"}
+        data-tooltip="Chat with Uno"
+        style={
+          {
+            "--penguin-y": `${Math.round(y)}px`,
+            "--penguin-x": `${Math.round(walkState.x)}px`,
+            "--penguin-facing": String(walkState.facing),
+          } as PenguinFollowerStyle
+        }
+        type="button"
+        onClick={() => setIsGuideOpen((isOpen) => !isOpen)}
+        onPointerDown={handlePenguinPointerDown}
+        onPointerEnter={() => setIsTooltipVisible(true)}
+        onPointerLeave={() => setIsTooltipVisible(false)}
+        onMouseEnter={() => setIsTooltipVisible(true)}
+        onMouseLeave={() => setIsTooltipVisible(false)}
+        aria-label="Open Uno portfolio guide chat"
+        aria-expanded={isGuideOpen}
+      >
+        <div
+          className={`penguin-animator${reactionClass}${walkingClass}`}
+          style={{ backgroundImage: `url("${basePath}/assets/penguin.png")` }}
+        />
+      </button>
+      <UnoGuideChat isOpen={isGuideOpen} onClose={() => setIsGuideOpen(false)} />
+    </>
   );
 }

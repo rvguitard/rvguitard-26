@@ -9,13 +9,17 @@
     "dev": "next dev --webpack",
     "build": "next build --webpack",
     "start": "next start",
+    "detect:web-tools": "node scripts/detect-web-tool-metadata.mjs",
     "lint": "eslint"
   },
   "dependencies": {
+    "@ai-sdk/react": "^3.0.209",
     "@supabase/supabase-js": "^2.106.0",
+    "ai": "^6.0.207",
     "next": "16.2.1",
     "react": "19.2.4",
-    "react-dom": "19.2.4"
+    "react-dom": "19.2.4",
+    "zod": "^4.4.3"
   },
   "devDependencies": {
     "@next/swc-wasm-nodejs": "^16.2.1",

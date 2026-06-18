@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { playUiSound } from "@/lib/ui-sounds";
 
 export function FooterLogo() {
   const [isDiscoMode, setIsDiscoMode] = useState(false);
@@ -19,7 +20,13 @@ export function FooterLogo() {
       type="button"
       aria-label={isDiscoMode ? "Turn disco mode off" : "Turn disco mode on"}
       aria-pressed={isDiscoMode}
-      onClick={() => setIsDiscoMode((current) => !current)}
+      data-sound-ignore
+      onClick={() =>
+        setIsDiscoMode((current) => {
+          void playUiSound(current ? "toggleOff" : "toggleOn");
+          return !current;
+        })
+      }
     >
       <span className="footer-logo-sparkles" aria-hidden="true">
         <span />

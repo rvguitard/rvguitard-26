@@ -4,7 +4,6 @@ import { EmojiFloat } from "@/components/emoji-float";
 import { CursorPresence } from "@/components/experiments/CursorPresence";
 import { FooterLogo } from "@/components/footer-logo";
 import { LedClock } from "@/components/led-clock";
-import { LedWord } from "@/components/led-word";
 import { MessageBoard } from "@/components/message-board";
 import { MusicPlayer } from "@/components/music-player";
 import { PenguinFollower } from "@/components/penguin-follower";
@@ -15,7 +14,7 @@ import { VisualTile } from "@/components/visual-tile";
 
 const basePath = process.env.NEXT_PUBLIC_BASE_PATH || "";
 const withBasePath = (path: string) => `${basePath}${path}`;
-const aiPromptCount = 128;
+const aiPromptCount = 249;
 
 const visualTiles = [
   {
@@ -58,7 +57,7 @@ const freelanceProjects = [
 const experiments = [
   {
     status: "WIP",
-    title: "CSS Spritesheet Keyframe Slicer",
+    title: "CSS Spritesheet Editor",
     type: "Tool",
   },
   {
@@ -133,10 +132,6 @@ export default function Home() {
             </div>
           </div>
         </div>
-
-        <section className="led-word-panel" aria-label="Work">
-          <LedWord text="Work" />
-        </section>
 
         <section id="work" className="project-card">
           <a href="https://qualified.com" className="project-topline">

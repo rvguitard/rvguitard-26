@@ -2,6 +2,7 @@
 
 import { CSSProperties, FormEvent, useEffect, useMemo, useRef, useState } from "react";
 import { supabase } from "@/lib/supabase";
+import { playUiSound } from "@/lib/ui-sounds";
 import { getVisitorId } from "@/lib/visitor-id";
 import {
   MESSAGE_MAX_LENGTH,
@@ -240,6 +241,7 @@ export function MessageBoard() {
     const result = validateMessage(String(new FormData(form).get("message") ?? ""));
 
     if (!result.ok) {
+      void playUiSound("error");
       setFeedback(result.message);
       return;
     }
@@ -267,6 +269,7 @@ export function MessageBoard() {
     form.reset();
 
     if (!supabase || !visitorId) {
+      void playUiSound("success");
       setIsSubmitting(false);
       return;
     }
@@ -285,6 +288,7 @@ export function MessageBoard() {
     setIsSubmitting(false);
 
     if (error || !data) {
+      void playUiSound("error");
       setFeedback("That message did not go through.");
       setSubmittedDay(null);
       resetMessageState();
@@ -294,6 +298,7 @@ export function MessageBoard() {
       return;
     }
 
+    void playUiSound("success");
     setMessages((currentMessages) => {
       const nextMessages = sortMessages(
         dedupeMessages([
@@ -345,6 +350,7 @@ export function MessageBoard() {
           />
           <button
             className="message-submit"
+            data-sound-ignore
             disabled={isSubmitting || draft.trim().length === 0}
             type="submit"
           >
